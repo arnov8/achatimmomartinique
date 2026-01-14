@@ -36,8 +36,10 @@ export default function Home() {
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
+  const [investorMode, setInvestorMode] = useState(false);
+
   const [email, setEmail] = useState("");
-  const [alertStatus, setAlertStatus] = useState(""); // Correction ici pour Vercel
+  const [alertStatus, setAlertStatus] = useState("");
 
   const [selectedAnnonce, setSelectedAnnonce] = useState<AnnonceRaw | null>(null);
   const [apport, setApport] = useState(0);
@@ -51,8 +53,6 @@ export default function Home() {
   const itemsPerPage = 20;
 
   const SHEET_URL = process.env.NEXT_PUBLIC_SHEET_URL || "";
-
-  const [investorMode, setInvestorMode] = useState(false);
 
   useEffect(() => {
     const savedFavs = localStorage.getItem("mes-favoris-immo");
@@ -255,7 +255,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FILTRES & SECTION ALERTE */}
+      {/* FILTRES */}
       <section id="listing" className="max-w-[1600px] mx-auto px-4 md:px-6 w-full pt-8 print:hidden">
         <div className="bg-white p-5 md:p-10 rounded-[2rem] md:rounded-[2.5rem] shadow-xl border border-slate-100 mb-6">
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 md:gap-6 items-end">
@@ -285,45 +285,21 @@ export default function Home() {
             </FilterBox>
           </div>
         </div>
-      {/* Switch Mode Investisseur */}
-<div className="max-w-[1600px] mx-auto px-4 md:px-6 mb-4 flex justify-end">
-  <button 
-    onClick={() => setInvestorMode(!investorMode)}
-    className={`flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all ${investorMode ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-slate-200 bg-white text-slate-500'}`}
-  >
-    <span className="text-lg">{investorMode ? '📈' : '🏠'}</span>
-    <span className="text-[10px] font-black uppercase tracking-widest">
-      {investorMode ? 'Mode Investisseur Actif' : 'Passer en Mode Investisseur'}
-    </span>
-  </button>
-</div>
-      {/* Compteur d'annonces */}
-<div className="max-w-[1600px] mx-auto px-4 md:px-6 mb-8">
-  <div className="inline-flex items-center gap-3 bg-white border border-slate-100 px-5 py-2.5 rounded-2xl shadow-sm">
-    <span className="relative flex h-2 w-2">
-      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
-    </span>
-    <p className="text-[11px] font-black uppercase tracking-widest text-slate-600">
-      <span className="text-blue-600">{filteredData.length}</span> annonces sont consultables aujourd'hui
-    </p>
-  </div>
-</div>
-        
+
         {/* SECTION ALERTE EMAIL */}
-        <div id="alerte-email" className="bg-blue-600 rounded-[2rem] p-6 md:p-10 mb-12 flex flex-col lg:flex-row items-center justify-between gap-8 shadow-lg border-2 border-blue-400/20 relative overflow-hidden group">
+        <div id="alerte-email" className="bg-blue-600 rounded-[2rem] p-6 md:p-10 mb-8 flex flex-col lg:flex-row items-center justify-between gap-8 shadow-lg border-2 border-blue-400/20 relative overflow-hidden group">
           <div className="flex-1 z-10 w-full">
-  <div className="flex items-center gap-4 mb-4">
-    <span className="text-3xl bg-white/20 p-3 rounded-2xl backdrop-blur-sm">🔔</span>
-    <h3 className="text-white text-xl md:text-2xl font-black">Ne ratez plus aucune opportunité !</h3>
-  </div>
-  <div className="flex flex-wrap gap-2 mb-6">
-    <p className="text-blue-100 text-[10px] font-black uppercase tracking-widest w-full mb-1 opacity-70">Critères sélectionnés :</p>
-    <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10">📍 {filterCommune || "Toute la Martinique"}</div>
-    <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10">🏠 {filterType || "Tous types"}</div>
-    <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10">💰 {filterPrixMax ? `${parseInt(filterPrixMax).toLocaleString()}€ max` : "Budget illimité"}</div>
-  </div>
-</div>
+            <div className="flex items-center gap-4 mb-4">
+              <span className="text-3xl bg-white/20 p-3 rounded-2xl backdrop-blur-sm">🔔</span>
+              <h3 className="text-white text-xl md:text-2xl font-black">Ne ratez plus aucune opportunité !</h3>
+            </div>
+            <div className="flex flex-wrap gap-2 mb-6">
+              <p className="text-blue-100 text-[10px] font-black uppercase tracking-widest w-full mb-1 opacity-70">Critères sélectionnés :</p>
+              <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10">📍 {filterCommune || "Toute la Martinique"}</div>
+              <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10">🏠 {filterType || "Tous types"}</div>
+              <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10">💰 {filterPrixMax ? `${parseInt(filterPrixMax).toLocaleString()}€ max` : "Budget illimité"}</div>
+            </div>
+          </div>
           <form onSubmit={handleAlertSubmit} className="flex flex-col sm:flex-row w-full lg:w-auto gap-3 z-10">
             <input 
               type="email" 
@@ -339,7 +315,33 @@ export default function Home() {
           </form>
         </div>
 
-        {/* GRILLE ANNONCES (5 COLONNES XL) */}
+        {/* SWITCH MODE INVESTISSEUR */}
+        <div className="mb-4 flex justify-end">
+          <button 
+            onClick={() => setInvestorMode(!investorMode)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all ${investorMode ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-slate-200 bg-white text-slate-500'}`}
+          >
+            <span className="text-lg">{investorMode ? '📈' : '🏠'}</span>
+            <span className="text-[10px] font-black uppercase tracking-widest">
+              {investorMode ? 'Mode Investisseur Actif' : 'Passer en Mode Investisseur'}
+            </span>
+          </button>
+        </div>
+
+        {/* COMPTEUR D'ANNONCES */}
+        <div className="mb-8">
+          <div className="inline-flex items-center gap-3 bg-white border border-slate-100 px-5 py-2.5 rounded-2xl shadow-sm">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+            </span>
+            <p className="text-[11px] font-black uppercase tracking-widest text-slate-600">
+              <span className="text-blue-600">{filteredData.length}</span> annonces sont consultables aujourd'hui
+            </p>
+          </div>
+        </div>
+
+        {/* GRILLE ANNONCES */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-16">
           {loading ? (
             <div className="col-span-full text-center py-20 text-slate-300 font-bold uppercase tracking-widest animate-pulse italic">Synchronisation...</div>
@@ -355,53 +357,68 @@ export default function Home() {
                   <div className="flex justify-between items-start mb-4">
                     <span className="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider">{annonce.TYPE_NORMALISE}</span>
                     <div className="flex gap-2">
-                      <button onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`J'ai trouvé ce bien immo : ${annonce.TITRE}\nLien : ${annonce.LIEN}\nAnnonce trouvée avec AchatImmoMartinique.com 👍🏽`)}`, "_blank")} className="opacity-40 hover:opacity-100 transition-all flex items-center justify-center" title="Partager sur WhatsApp">
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    viewBox="0 0 448 512" 
-    className="w-[22px] h-[22px] fill-[#25D366]"
-  >
-    <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.6-2.8-23.6-8.7-45-27.7-16.6-14.8-27.8-33.2-31.1-38.7-3.2-5.5-.3-8.5 2.5-11.2 2.5-2.5 5.5-6.5 8.3-9.7 2.8-3.3 3.7-5.5 5.5-9.3 1.9-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.7 23.5 9.2 31.6 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
-  </svg>
-</button>
+                      <button 
+                        onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`J'ai trouvé ce bien immo : ${annonce.TITRE}\nLien : ${annonce.LIEN}\nAnnonce trouvée avec AchatImmoMartinique.com 👍🏽`)}`, "_blank")} 
+                        className="opacity-40 hover:opacity-100 transition-all flex items-center justify-center"
+                        title="Partager sur WhatsApp"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" className="w-[22px] h-[22px] fill-[#25D366]">
+                          <path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.6-2.8-23.6-8.7-45-27.7-16.6-14.8-27.8-33.2-31.1-38.7-3.2-5.5-.3-8.5 2.5-11.2 2.5-2.5 5.5-6.5 8.3-9.7 2.8-3.3 3.7-5.5 5.5-9.3 1.9-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.7 23.5 9.2 31.6 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/>
+                        </svg>
+                      </button>
                       <button onClick={() => toggleFavorite(annonce.LIEN)} className={`text-xl transition-all ${isFav ? 'scale-110' : 'opacity-20 hover:opacity-100'}`}>❤️</button>
                     </div>
                   </div>
                   
                   <div className="mb-4 min-h-[80px]">
-  {!investorMode ? (
-    <>
-      <p className="text-xl md:text-2xl font-black text-slate-900 leading-none">
-        {p.toLocaleString('fr-FR')} €
-      </p>
-      <div className="text-[9px] font-bold text-slate-500 mt-1 uppercase tracking-tight">
-        Estim. frais de notaire : {Math.round(p * 0.08).toLocaleString('fr-FR')} €
-      </div>
-    </>
-  ) : (
-    <div className="bg-indigo-600 p-3 rounded-xl text-white">
-      <div className="flex justify-between items-center mb-1">
-        <span className="text-[8px] font-black uppercase opacity-80">Rendement Brut</span>
-        <span className="text-lg font-black">{((800 * 12 / p) * 100).toFixed(1)}%</span>
-      </div>
-      <div className="flex justify-between items-center">
-        <span className="text-[8px] font-black uppercase opacity-80">Potentiel Airbnb</span>
-        <span className="text-[10px] font-black italic">~110€ / nuit</span>
-      </div>
-    </div>
-  )}
-  
-  {applicable && !investorMode && (
-    <div className={`text-[8px] font-black mt-2 inline-block px-1.5 py-0.5 rounded ${ecart > 0 ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
-      {ecart > 0 ? '+' : ''}{ecart.toFixed(0)}% / m² moy.
-    </div>
-  )}
-</div>
+                    {!investorMode ? (
+                      <>
+                        <p className="text-xl md:text-2xl font-black text-slate-900 leading-none">
+                          {p.toLocaleString('fr-FR')} €
+                        </p>
+                        <div className="text-[9px] font-bold text-slate-500 mt-1 uppercase tracking-tight">
+                          Estim. frais de notaire : {Math.round(p * 0.08).toLocaleString('fr-FR')} €
+                        </div>
+                      </>
+                    ) : (
+                      <div className="bg-indigo-600 p-3 rounded-xl text-white">
+                        <div className="flex justify-between items-center mb-1">
+                          <span className="text-[8px] font-black uppercase opacity-80">Rendement Brut</span>
+                          <span className="text-lg font-black">{((800 * 12 / p) * 100).toFixed(1)}%</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-[8px] font-black uppercase opacity-80">Potentiel Airbnb</span>
+                          <span className="text-[10px] font-black italic">~110€ / nuit</span>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {applicable && !investorMode && (
+                      <div className={`text-[8px] font-black mt-2 inline-block px-1.5 py-0.5 rounded ${ecart > 0 ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
+                        {ecart > 0 ? '+' : ''}{ecart.toFixed(0)}% / m² moy.
+                      </div>
+                    )}
+                  </div>
+
+                  <h3 className="text-sm font-black text-slate-800 mb-3 truncate uppercase tracking-tight">{annonce.COMMUNE_NORMALISEE}</h3>
+                  <div className="flex gap-2 mb-4">
+                    <span className="text-[10px] font-bold text-slate-400">📐 {annonce.SURFACE}m²</span>
+                    <span className="text-[10px] font-bold text-slate-400">🚪 {annonce["NOMBRE DE PIECES"]}p.</span>
+                  </div>
+
+                  {investorMode && (
+                    <div className="flex flex-wrap gap-1 mb-4">
+                      <span className="text-[7px] font-black bg-slate-100 text-slate-600 px-2 py-0.5 rounded uppercase">🎓 Proche Étudiants</span>
+                      <span className="text-[7px] font-black bg-orange-100 text-orange-600 px-2 py-0.5 rounded uppercase">☀️ Zone Touristique</span>
+                    </div>
+                  )}
+
+                  {isFav && (
+                    <div className="mb-4">
                       <textarea value={notes[annonce.LIEN] || ""} onChange={(e) => updateNote(annonce.LIEN, e.target.value)} placeholder="Note privée..." className="w-full bg-yellow-50/50 border border-yellow-100 rounded-xl p-3 text-[9px] h-12 resize-none outline-none font-medium" />
                     </div>
                   )}
 
-                  {/* BOUTONS DANS L'ORDRE DEMANDÉ */}
                   <div className="mt-auto space-y-2 pt-4 border-t border-slate-50">
                     <button onClick={() => { setSelectedAnnonce(annonce); setApport(Math.round(p * 0.1)); }} className="w-full bg-slate-50 text-slate-500 py-3 rounded-xl text-[8px] font-black uppercase tracking-widest hover:bg-blue-50 hover:text-blue-600 transition-colors">📊 Simuler mon prêt</button>
                     {isInvestReady && (
@@ -425,7 +442,7 @@ export default function Home() {
         )}
       </section>
 
-      {/* SECTION SERVICES (PRÉSERVÉE) */}
+      {/* SECTION SERVICES */}
       <section className="bg-white py-20 px-6 border-t border-slate-100 print:hidden">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -451,7 +468,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FOOTER (PRÉSERVÉ) */}
+      {/* FOOTER */}
       <footer className="bg-slate-900 text-white pt-20 pb-10 px-6 mt-auto print:hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-1 md:col-span-2">
@@ -482,7 +499,7 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* MODALES (VÉRIFIÉES : CONSERVÉES) */}
+      {/* MODALES */}
       {selectedAnnonce && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-md" onClick={() => setSelectedAnnonce(null)}></div>
@@ -570,3 +587,4 @@ function FilterBox({ label, children, onChange }: { label: string; children: Rea
       </div>
     </div>
   );
+}
