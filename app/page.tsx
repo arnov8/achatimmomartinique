@@ -37,7 +37,7 @@ export default function Home() {
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
 
   const [email, setEmail] = useState("");
-  const [alertStatus, setAlertStatus] = useState("");
+  const [alertStatus, setAlertStatus] =("");
 
   const [selectedAnnonce, setSelectedAnnonce] = useState<AnnonceRaw | null>(null);
   const [apport, setApport] = useState(0);
@@ -216,7 +216,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col font-sans overflow-x-hidden">
       
-      {/* HEADER PREMIUM */}
+      {/* HEADER */}
       <header className="bg-white/80 backdrop-blur-md py-4 px-4 md:px-6 border-b border-slate-100 sticky top-0 z-40 shadow-sm print:hidden">
         <div className="max-w-[1600px] mx-auto flex justify-between items-center">
           <div className="flex flex-col cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
@@ -242,7 +242,7 @@ export default function Home() {
               PIPELINE DE LIENS D'ANNONCES IMMOBILIERES
             </p>
             <p className="text-base md:text-xl opacity-95 mb-8 font-medium leading-relaxed max-w-2xl">
-              <strong>AchatImmoMartinique</strong> centralise toutes les annonces immobilières de Martinique publiées par les principaux professionnels du marché (agences, réseaux, experts locaux). Plus besoin de multiplier les recherches sur différents sites : trouvez rapidement maisons, appartements, terrains, programmes neufs et opportunités d’investissement en Martinique.
+              <strong>AchatImmoMartinique</strong> centralise toutes les annonces immobilières de Martinique publiées par les principaux professionnels du marché. Plus besoin de multiplier les recherches.
             </p>
             <div className="flex flex-wrap justify-center md:justify-start gap-3 md:gap-4">
               <a href="#listing" className="bg-white text-blue-700 px-6 py-3.5 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-black shadow-2xl hover:scale-105 transition-all uppercase text-[10px] md:text-xs tracking-widest">Voir les annonces</a>
@@ -286,8 +286,8 @@ export default function Home() {
           </div>
         </div>
 
-        {/* SECTION ALERTE EMAIL AVEC RÉCAPITULATIF DES CHOIX VISITEUR */}
-        <div id="alerte-email" className="bg-blue-600 rounded-[2rem] p-6 md:p-10 mb-12 flex flex-col lg:flex-row items-center justify-between gap-8 shadow-lg shadow-blue-200 border-2 border-blue-400/20 relative overflow-hidden group">
+        {/* SECTION ALERTE EMAIL AVEC RÉCAPITULATIF */}
+        <div id="alerte-email" className="bg-blue-600 rounded-[2rem] p-6 md:p-10 mb-12 flex flex-col lg:flex-row items-center justify-between gap-8 shadow-lg border-2 border-blue-400/20 relative overflow-hidden group">
           <div className="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
           <div className="flex-1 z-10 w-full">
             <div className="flex items-center gap-4 mb-4">
@@ -295,23 +295,20 @@ export default function Home() {
               <h3 className="text-white text-xl md:text-2xl font-black">Ne ratez plus aucune opportunité !</h3>
             </div>
             
-            {/* RÉCAPITULATIF DES CHOIX (Instantané des dropdowns) */}
             <div className="flex flex-wrap gap-2 mb-6">
-              <span className="text-blue-100 text-[10px] font-black uppercase tracking-widest w-full mb-1 opacity-70">Votre sélection actuelle :</span>
-              <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10 shadow-inner">
+              <span className="text-blue-100 text-[10px] font-black uppercase tracking-widest w-full mb-1 opacity-70">Critères sélectionnés :</span>
+              <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10">
                 📍 {filterCommune || "Toute la Martinique"}
               </div>
-              <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10 shadow-inner">
-                🏠 {filterType || "Tous types de biens"}
+              <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10">
+                🏠 {filterType || "Tous types"}
               </div>
-              <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10 shadow-inner">
-                💰 {filterPrixMax ? `${parseInt(filterPrixMax).toLocaleString()} € max` : "Budget illimité"}
+              <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10">
+                💰 {filterPrixMax ? `${parseInt(filterPrixMax).toLocaleString()}€ max` : "Budget illimité"}
               </div>
             </div>
 
-            <p className="text-blue-100 text-[11px] font-medium opacity-80 uppercase tracking-widest italic leading-relaxed">
-              Recevez par email les annonces correspondant exactement à ces critères dès leur publication.
-            </p>
+            <p className="text-blue-100 text-[11px] font-medium opacity-80 uppercase tracking-widest italic">Recevez ces annonces par email dès leur parution.</p>
           </div>
 
           <form onSubmit={handleAlertSubmit} className="flex flex-col sm:flex-row w-full lg:w-auto gap-3 z-10">
@@ -350,7 +347,7 @@ export default function Home() {
                   <div className="flex justify-between items-start mb-4">
                     <span className="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider">{annonce.TYPE_NORMALISE}</span>
                     <div className="flex gap-2">
-                      <button onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent("Bonjour ! Ce bien m'intéresse : " + annonce.TITRE + " à " + annonce.COMMUNE_NORMALISEE + ". Lien : " + annonce.LIEN)}`, "_blank")} className="text-lg grayscale opacity-30 hover:opacity-100 hover:grayscale-0 transition-all">💬</button>
+                      <button onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent("Bonjour ! Ce bien m'intéresse : " + annonce.TITRE + ". Lien : " + annonce.LIEN)}`, "_blank")} className="text-lg grayscale opacity-30 hover:opacity-100 hover:grayscale-0 transition-all">💬</button>
                       <button onClick={() => toggleFavorite(annonce.LIEN)} className={`text-xl transition-all ${isFav ? 'scale-110' : 'opacity-20 hover:opacity-100'}`}>❤️</button>
                     </div>
                   </div>
@@ -381,12 +378,13 @@ export default function Home() {
                     </div>
                   )}
 
+                  {/* ORDRE DES BOUTONS : SIMULER -> RENDEMENT -> VOIR L'ANNONCE */}
                   <div className="mt-auto space-y-2 pt-4 border-t border-slate-50">
-                    <a href={annonce.LIEN} target="_blank" rel="noopener noreferrer" className="block w-full bg-slate-900 text-white text-center py-3 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-blue-600 transition-all">Voir l'original</a>
                     <button onClick={() => { setSelectedAnnonce(annonce); setApport(Math.round(p * 0.1)); }} className="w-full bg-slate-50 text-slate-500 py-3 rounded-xl text-[8px] font-black uppercase tracking-widest hover:bg-blue-50 hover:text-blue-600 transition-colors">📊 Simuler mon prêt</button>
                     {isInvestReady && (
                       <button onClick={() => setInvestAnnonce(annonce)} className="w-full bg-indigo-50 text-indigo-700 py-3 rounded-xl text-[8px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-colors">📈 Calcul Rendement</button>
                     )}
+                    <a href={annonce.LIEN} target="_blank" rel="noopener noreferrer" className="block w-full bg-slate-900 text-white text-center py-3 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-blue-600 transition-all">Voir l'annonce</a>
                   </div>
                 </div>
               </div>
@@ -409,11 +407,8 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 leading-tight">Accompagnement complet pour votre projet immobilier.</h2>
-            <p className="text-slate-500 text-lg leading-relaxed font-medium">
-              Que vous cherchiez votre résidence principale, un pied-à-terre, une maison de vacances ou un bien à fort potentiel locatif, <span className="text-blue-600 font-bold">AchatImmoMartinique.com</span> est là pour vous accompagner dans votre recherche immobilière en Martinique.
-            </p>
+            <p className="text-slate-500 text-lg leading-relaxed font-medium">Trouvez rapidement maisons, appartements, terrains et opportunités d’investissement en Martinique.</p>
           </div>
-
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
             {[
               { icon: "🔔", title: "Alerte Annonce", desc: "Soyez le premier notifié" },
@@ -446,9 +441,9 @@ export default function Home() {
           <div>
             <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-8 border-b border-white/10 pb-2">Navigation</h4>
             <ul className="space-y-4 text-xs font-bold text-slate-300">
-              <li><button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="hover:text-blue-400 transition-colors">Rechercher un bien</button></li>
+              <li><button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="hover:text-blue-400 transition-colors">Rechercher un bien (accueil)</button></li>
               <li><a href="#alerte-email" className="hover:text-blue-400 transition-colors">Alerte Email</a></li>
-              <li><button onClick={handleToggleOnlyFavorites} className="hover:text-blue-400 transition-colors text-left">Mes favoris</button></li>
+              <li><button onClick={handleToggleOnlyFavorites} className="hover:text-blue-400 transition-colors text-left">Mes favoris (affichage des favoris)</button></li>
             </ul>
           </div>
           <div>
@@ -469,7 +464,7 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* MODALES DE CALCUL (VÉRIFIÉES : CONSERVÉES) */}
+      {/* MODALES DE CALCUL (CONSERVÉES) */}
       {selectedAnnonce && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-md" onClick={() => setSelectedAnnonce(null)}></div>
@@ -530,9 +525,6 @@ export default function Home() {
                 <label className="text-[9px] font-black uppercase text-slate-400 block mb-2 italic">Loyer mensuel estimé : {loyerEstime} €</label>
                 <input type="range" min="300" max="5000" step="50" value={loyerEstime} onChange={(e) => setLoyerEstime(parseInt(e.target.value))} className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
               </div>
-              <div className="bg-slate-50 p-6 rounded-2xl text-[10px] text-slate-500 leading-relaxed">
-                ℹ️ Le calcul prend en compte une estimation forfaitaire de 30% de charges (taxe foncière, gestion, entretien).
-              </div>
               <button onClick={() => setInvestAnnonce(null)} className="w-full bg-indigo-600 text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-xl shadow-indigo-200">Fermer</button>
             </div>
           </div>
@@ -543,7 +535,7 @@ export default function Home() {
   );
 }
 
-// COMPOSANT FILTRE - MODERNISÉ ET AGRANDI
+// COMPOSANT FILTRE
 function FilterBox({ label, children, onChange }: { label: string; children: React.ReactNode; onChange: (val: string) => void }) {
   return (
     <div className="flex flex-col gap-3">
@@ -555,7 +547,6 @@ function FilterBox({ label, children, onChange }: { label: string; children: Rea
         >
           {children}
         </select>
-        {/* Flèche Custom pour plus de modernité */}
         <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-30 group-hover:opacity-100 transition-opacity">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"></path></svg>
         </div>
