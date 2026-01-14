@@ -216,7 +216,7 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col font-sans overflow-x-hidden">
       
-      {/* HEADER PREMIUM - NETTOYÉ */}
+      {/* HEADER PREMIUM */}
       <header className="bg-white/80 backdrop-blur-md py-4 px-4 md:px-6 border-b border-slate-100 sticky top-0 z-40 shadow-sm print:hidden">
         <div className="max-w-[1600px] mx-auto flex justify-between items-center">
           <div className="flex flex-col cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
@@ -286,28 +286,32 @@ export default function Home() {
           </div>
         </div>
 
-        {/* SECTION ALERTE - AVEC RÉCAPITULATIF DES FILTRES */}
+        {/* SECTION ALERTE EMAIL AVEC RÉCAPITULATIF DES CHOIX VISITEUR */}
         <div id="alerte-email" className="bg-blue-600 rounded-[2rem] p-6 md:p-10 mb-12 flex flex-col lg:flex-row items-center justify-between gap-8 shadow-lg shadow-blue-200 border-2 border-blue-400/20 relative overflow-hidden group">
           <div className="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
-          <div className="flex-1 z-10">
+          <div className="flex-1 z-10 w-full">
             <div className="flex items-center gap-4 mb-4">
               <span className="text-3xl bg-white/20 p-3 rounded-2xl backdrop-blur-sm">🔔</span>
               <h3 className="text-white text-xl md:text-2xl font-black">Ne ratez plus aucune opportunité !</h3>
             </div>
             
-            {/* RÉCAPITULATIF VISUEL DES CHOIX (Non modifiable ici) */}
-            <div className="flex flex-wrap gap-2 mb-4">
-              <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10 flex items-center gap-2">
-                <span className="opacity-60 uppercase text-[9px] tracking-widest">Ville:</span> {filterCommune || "Martinique"}
+            {/* RÉCAPITULATIF DES CHOIX (Instantané des dropdowns) */}
+            <div className="flex flex-wrap gap-2 mb-6">
+              <span className="text-blue-100 text-[10px] font-black uppercase tracking-widest w-full mb-1 opacity-70">Votre sélection actuelle :</span>
+              <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10 shadow-inner">
+                📍 {filterCommune || "Toute la Martinique"}
               </div>
-              <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10 flex items-center gap-2">
-                <span className="opacity-60 uppercase text-[9px] tracking-widest">Type:</span> {filterType || "Tous"}
+              <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10 shadow-inner">
+                🏠 {filterType || "Tous types de biens"}
               </div>
-              <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10 flex items-center gap-2">
-                <span className="opacity-60 uppercase text-[9px] tracking-widest">Budget:</span> {filterPrixMax ? `${parseInt(filterPrixMax).toLocaleString()}€ max` : "Illimité"}
+              <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10 shadow-inner">
+                💰 {filterPrixMax ? `${parseInt(filterPrixMax).toLocaleString()} € max` : "Budget illimité"}
               </div>
             </div>
-            <p className="text-blue-100 text-[11px] font-medium opacity-80 uppercase tracking-widest italic">Recevez les annonces correspondantes dès leur parution.</p>
+
+            <p className="text-blue-100 text-[11px] font-medium opacity-80 uppercase tracking-widest italic leading-relaxed">
+              Recevez par email les annonces correspondant exactement à ces critères dès leur publication.
+            </p>
           </div>
 
           <form onSubmit={handleAlertSubmit} className="flex flex-col sm:flex-row w-full lg:w-auto gap-3 z-10">
@@ -325,7 +329,7 @@ export default function Home() {
           </form>
         </div>
 
-        {/* GRILLE ANNONCES - 5 PAR LIGNE SUR DESKTOP */}
+        {/* GRILLE ANNONCES - 5 PAR LIGNE SUR XL */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-16">
           {loading ? (
             <div className="col-span-full text-center py-20 text-slate-300 font-bold uppercase tracking-widest animate-pulse italic">Synchronisation...</div>
@@ -345,7 +349,10 @@ export default function Home() {
                 <div className="p-5 md:p-6 flex flex-col h-full">
                   <div className="flex justify-between items-start mb-4">
                     <span className="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider">{annonce.TYPE_NORMALISE}</span>
-                    <button onClick={() => toggleFavorite(annonce.LIEN)} className={`text-xl transition-all ${isFav ? 'scale-110' : 'opacity-20 hover:opacity-100'}`}>❤️</button>
+                    <div className="flex gap-2">
+                      <button onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent("Bonjour ! Ce bien m'intéresse : " + annonce.TITRE + " à " + annonce.COMMUNE_NORMALISEE + ". Lien : " + annonce.LIEN)}`, "_blank")} className="text-lg grayscale opacity-30 hover:opacity-100 hover:grayscale-0 transition-all">💬</button>
+                      <button onClick={() => toggleFavorite(annonce.LIEN)} className={`text-xl transition-all ${isFav ? 'scale-110' : 'opacity-20 hover:opacity-100'}`}>❤️</button>
+                    </div>
                   </div>
                   
                   <div className="mb-4">
@@ -363,9 +370,23 @@ export default function Home() {
                     <span className="text-[10px] font-bold text-slate-400">🚪 {annonce["NOMBRE DE PIECES"]}p.</span>
                   </div>
 
+                  {isFav && (
+                    <div className="mb-4 animate-in slide-in-from-top-1">
+                      <textarea 
+                        value={notes[annonce.LIEN] || ""} 
+                        onChange={(e) => updateNote(annonce.LIEN, e.target.value)}
+                        placeholder="Ma note privée..."
+                        className="w-full bg-yellow-50/50 border border-yellow-100 rounded-xl p-3 text-[9px] h-12 resize-none outline-none font-medium"
+                      />
+                    </div>
+                  )}
+
                   <div className="mt-auto space-y-2 pt-4 border-t border-slate-50">
                     <a href={annonce.LIEN} target="_blank" rel="noopener noreferrer" className="block w-full bg-slate-900 text-white text-center py-3 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-blue-600 transition-all">Voir l'original</a>
-                    <button onClick={() => { setSelectedAnnonce(annonce); setApport(Math.round(p * 0.1)); }} className="w-full bg-slate-50 text-slate-500 py-3 rounded-xl text-[8px] font-black uppercase tracking-widest hover:bg-blue-50 hover:text-blue-600 transition-colors">Simuler</button>
+                    <button onClick={() => { setSelectedAnnonce(annonce); setApport(Math.round(p * 0.1)); }} className="w-full bg-slate-50 text-slate-500 py-3 rounded-xl text-[8px] font-black uppercase tracking-widest hover:bg-blue-50 hover:text-blue-600 transition-colors">📊 Simuler mon prêt</button>
+                    {isInvestReady && (
+                      <button onClick={() => setInvestAnnonce(annonce)} className="w-full bg-indigo-50 text-indigo-700 py-3 rounded-xl text-[8px] font-black uppercase tracking-widest hover:bg-indigo-100 transition-colors">📈 Calcul Rendement</button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -383,22 +404,51 @@ export default function Home() {
         )}
       </section>
 
-      {/* FOOTER PREMIUM - MIS À JOUR SELON VOS INSTRUCTIONS */}
+      {/* SECTION SERVICES (VÉRIFIÉE : CONSERVÉE) */}
+      <section className="bg-white py-20 px-6 border-t border-slate-100 print:hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 leading-tight">Accompagnement complet pour votre projet immobilier.</h2>
+            <p className="text-slate-500 text-lg leading-relaxed font-medium">
+              Trouvez rapidement maisons, appartements, terrains et opportunités d’investissement en Martinique.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            {[
+              { icon: "🔔", title: "Alerte Annonce", desc: "Soyez le premier notifié" },
+              { icon: "⚖️", title: "Frais de notaire", desc: "Estimation immédiate" },
+              { icon: "📊", title: "Simulation prêt", desc: "Calculez vos mensualités" },
+              { icon: "📈", title: "Rendement", desc: "Analysez la rentabilité" },
+              { icon: "❤️", title: "Favoris", desc: "Sauvegardez vos biens" },
+              { icon: "💬", title: "WhatsApp", desc: "Partage rapide à un ami" },
+            ].map((item, i) => (
+              <div key={i} className="bg-slate-50 rounded-[2rem] p-6 text-center hover:bg-blue-50 hover:scale-105 transition-all duration-300 group cursor-default">
+                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300 inline-block">{item.icon}</div>
+                <h3 className="font-black text-[10px] uppercase tracking-widest text-slate-900 mb-2">{item.title}</h3>
+                <p className="text-[10px] text-slate-400 font-bold leading-tight">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER PREMIUM - MISE À JOUR RIGOUREUSE */}
       <footer className="bg-slate-900 text-white pt-20 pb-10 px-6 mt-auto print:hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-1 md:col-span-2">
             <h3 className="text-xl md:text-2xl font-black text-blue-400 mb-2 italic">AchatImmoMartinique</h3>
             <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-6">Plateforme de centralisation d'annonces immo</p>
-            <p className="text-slate-400 text-xs md:text-sm leading-relaxed max-w-md">
+            <p className="text-slate-400 text-xs md:text-sm leading-relaxed max-w-md font-medium">
               AchatImmoMartinique est un site indépendant de référencement d’annonces immobilières. Le site ne commercialise aucun bien et n’intervient pas dans les transactions. Seules les annonces présentes sur les sites des professionnels immobiliers font foi.
             </p>
           </div>
           <div>
             <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-8 border-b border-white/10 pb-2">Navigation</h4>
             <ul className="space-y-4 text-xs font-bold text-slate-300">
-              <li><a href="#" className="hover:text-blue-400 transition-colors">Rechercher un bien</a></li>
+              <li><button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="hover:text-blue-400 transition-colors">Rechercher un bien (accueil)</button></li>
               <li><a href="#alerte-email" className="hover:text-blue-400 transition-colors">Alerte Email</a></li>
-              <li><button onClick={handleToggleOnlyFavorites} className="hover:text-blue-400 transition-colors text-left">Mes favoris</button></li>
+              <li><button onClick={handleToggleOnlyFavorites} className="hover:text-blue-400 transition-colors text-left">Mes favoris (affichage des favoris)</button></li>
             </ul>
           </div>
           <div>
@@ -419,7 +469,7 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* MODALE PRÊT (Conservée) */}
+      {/* MODALES DE CALCUL (VÉRIFIÉES : CONSERVÉES) */}
       {selectedAnnonce && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-md" onClick={() => setSelectedAnnonce(null)}></div>
@@ -455,7 +505,6 @@ export default function Home() {
         </div>
       )}
 
-      {/* MODALE RENDEMENT (Conservée) */}
       {investAnnonce && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-indigo-900/70 backdrop-blur-md" onClick={() => setInvestAnnonce(null)}></div>
@@ -481,6 +530,9 @@ export default function Home() {
                 <label className="text-[9px] font-black uppercase text-slate-400 block mb-2 italic">Loyer mensuel estimé : {loyerEstime} €</label>
                 <input type="range" min="300" max="5000" step="50" value={loyerEstime} onChange={(e) => setLoyerEstime(parseInt(e.target.value))} className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
               </div>
+              <div className="bg-slate-50 p-6 rounded-2xl text-[10px] text-slate-500 leading-relaxed">
+                ℹ️ Le calcul prend en compte une estimation forfaitaire de 30% de charges (taxe foncière, gestion, entretien).
+              </div>
               <button onClick={() => setInvestAnnonce(null)} className="w-full bg-indigo-600 text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-xl shadow-indigo-200">Fermer</button>
             </div>
           </div>
@@ -491,7 +543,7 @@ export default function Home() {
   );
 }
 
-// COMPOSANT FILTRE - AGRANDI ET MODERNISÉ
+// COMPOSANT FILTRE - MODERNISÉ ET AGRANDI
 function FilterBox({ label, children, onChange }: { label: string; children: React.ReactNode; onChange: (val: string) => void }) {
   return (
     <div className="flex flex-col gap-3">
@@ -503,6 +555,7 @@ function FilterBox({ label, children, onChange }: { label: string; children: Rea
         >
           {children}
         </select>
+        {/* Flèche Custom pour plus de modernité */}
         <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-30 group-hover:opacity-100 transition-opacity">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"></path></svg>
         </div>
