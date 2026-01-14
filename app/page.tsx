@@ -410,7 +410,7 @@ export default function Home() {
           <div className="text-center max-w-3xl mx-auto mb-16">
             <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 leading-tight">Accompagnement complet pour votre projet immobilier.</h2>
             <p className="text-slate-500 text-lg leading-relaxed font-medium">
-              Trouvez rapidement maisons, appartements, terrains et opportunités d’investissement en Martinique.
+              Que vous cherchiez votre résidence principale, un pied-à-terre, une maison de vacances ou un bien à fort potentiel locatif, <span className="text-blue-600 font-bold">AchatImmoMartinique.com</span> est là pour vous accompagner dans votre recherche immobilière en Martinique.
             </p>
           </div>
 
@@ -446,9 +446,9 @@ export default function Home() {
           <div>
             <h4 className="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-8 border-b border-white/10 pb-2">Navigation</h4>
             <ul className="space-y-4 text-xs font-bold text-slate-300">
-              <li><button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="hover:text-blue-400 transition-colors">Rechercher un bien (accueil)</button></li>
+              <li><button onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})} className="hover:text-blue-400 transition-colors">Rechercher un bien</button></li>
               <li><a href="#alerte-email" className="hover:text-blue-400 transition-colors">Alerte Email</a></li>
-              <li><button onClick={handleToggleOnlyFavorites} className="hover:text-blue-400 transition-colors text-left">Mes favoris (affichage des favoris)</button></li>
+              <li><button onClick={handleToggleOnlyFavorites} className="hover:text-blue-400 transition-colors text-left">Mes favoris</button></li>
             </ul>
           </div>
           <div>
