@@ -8,7 +8,7 @@ export default function MethodologyPage() {
 
   // Chargement robuste de l'animation pour Turbopack
   useEffect(() => {
-    fetch("/animations/methodology.json")
+    fetch("/animations/Methodology.json")
       .then((res) => res.json())
       .then((data) => setAnimationData(data))
       .catch((err) => console.error("Erreur chargement Lottie:", err));
