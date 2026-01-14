@@ -8,7 +8,7 @@ export default function AboutPage() {
 
   // On charge le JSON dynamiquement pour être sûr qu'il s'anime
   useEffect(() => {
-    fetch("/animations/about.json")
+    fetch("/animations/About.json")
       .then((res) => res.json())
       .then((data) => setAnimationData(data));
   }, []);
