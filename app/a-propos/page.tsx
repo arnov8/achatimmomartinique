@@ -2,7 +2,6 @@
 
 import Lottie from "lottie-react";
 import { useEffect, useState } from "react";
-import { CheckCircle2, ShieldCheck, Globe, Zap, Search } from "lucide-react";
 
 export default function AboutPage() {
   const [animationData, setAnimationData] = useState(null);
@@ -37,72 +36,68 @@ export default function AboutPage() {
           <div className="max-w-3xl mx-auto">
             <p className="text-lg text-slate-700 leading-relaxed mb-8">
               <span className="font-bold text-slate-900">AchatImmoMartinique.com</span> a été conçu pour répondre à un besoin clair : 
-              <span className="text-blue-600 font-medium"> rassembler toutes les annonces immobilières de l’île sur une seule plateforme facile d’accès.</span>
+              <span className="text-blue-600 font-medium text-xl block mt-2"> 
+                Rassembler toutes les annonces immobilières de l’île sur une seule plateforme facile d’accès.
+              </span>
             </p>
             
-            <p className="text-slate-600 mb-10">
-              Nous savons qu’aujourd’hui, le marché immobilier en Martinique est riche mais éclaté. Entre agences, portails nationaux et sites spécialisés, il est difficile de voir l’ensemble des biens disponibles au même endroit.
+            <p className="text-slate-600 mb-10 leading-relaxed">
+              Nous savons qu’aujourd’hui, le marché immobilier en Martinique est riche mais éclaté. Entre agences, portails nationaux et sites spécialisés, il est difficile de voir l’ensemble des biens disponibles au même endroit. C’est pourquoi nous avons créé un système qui agrège les offres de nos partenaires pour vous offrir :
             </p>
 
-            {/* Grid Avantages */}
+            {/* Grid Avantages - Utilisation d'Emojis à la place de Lucide */}
             <div className="grid sm:grid-cols-3 gap-6 mb-12">
               <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col items-center text-center">
-                <div className="bg-white p-3 rounded-xl shadow-sm mb-4">
-                  <Globe className="w-6 h-6 text-blue-500" />
-                </div>
-                <p className="text-sm font-bold text-slate-800 leading-tight">Vue complète du marché local</p>
+                <span className="text-3xl mb-3">📍</span>
+                <p className="text-sm font-bold text-slate-800 leading-tight">Une vue complète du marché local</p>
               </div>
               <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col items-center text-center">
-                <div className="bg-white p-3 rounded-xl shadow-sm mb-4">
-                  <Zap className="w-6 h-6 text-blue-500" />
-                </div>
-                <p className="text-sm font-bold text-slate-800 leading-tight">Résultats mis à jour en continu</p>
+                <span className="text-3xl mb-3">⚡</span>
+                <p className="text-sm font-bold text-slate-800 leading-tight">Des résultats mis à jour en continu</p>
               </div>
               <div className="p-6 bg-slate-50 rounded-2xl border border-slate-100 flex flex-col items-center text-center">
-                <div className="bg-white p-3 rounded-xl shadow-sm mb-4">
-                  <Search className="w-6 h-6 text-blue-500" />
-                </div>
-                <p className="text-sm font-bold text-slate-800 leading-tight">Recherche optimisée par critères</p>
+                <span className="text-3xl mb-3">🔍</span>
+                <p className="text-sm font-bold text-slate-800 leading-tight">Une recherche optimisée par critères</p>
               </div>
             </div>
 
             <div className="bg-blue-600 text-white p-8 rounded-[2rem] shadow-xl shadow-blue-200">
               <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
-                <CheckCircle2 className="w-6 h-6" /> Notre engagement
+                ✅ Notre engagement
               </h3>
-              <p className="leading-relaxed opacity-90">
-                Transparence, simplicité et neutralité. Nous ne sommes pas une agence : nous vous donnons les outils pour prendre une décision éclairée, tout en vous renvoyant directement vers les professionnels responsables de chaque annonce.
+              <p className="leading-relaxed opacity-95">
+                <strong>Transparence, simplicité et neutralité.</strong> Nous ne sommes pas une agence : nous vous donnons les outils pour prendre une décision éclairée, tout en vous renvoyant directement vers les professionnels responsables de chaque annonce.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Section Confiance */}
+        {/* Section Pourquoi nous faire confiance */}
         <div className="grid md:grid-cols-2 gap-8 items-center bg-slate-900 rounded-[2.5rem] p-8 sm:p-16 text-white">
           <div>
-            <h2 className="text-3xl font-bold mb-6 flex items-center gap-3">
-              <ShieldCheck className="text-blue-400 w-10 h-10" />
-              Pourquoi nous faire confiance ?
+            <h2 className="text-3xl font-bold mb-6">
+              <span className="text-blue-400 block text-sm uppercase tracking-widest mb-2 font-black">Confiance & Transparence</span>
+              Pourquoi choisir notre plateforme ?
             </h2>
             <p className="text-slate-300 text-lg leading-relaxed mb-6">
-              AchatImmoMartinique.com s’appuie sur une méthodologie rigoureuse et transparente. Les annonces proviennent exclusivement de <span className="text-white font-semibold">professionnels de l'immobilier identifiés</span>.
+              AchatImmoMartinique.com s’appuie sur une méthodologie rigoureuse. Les annonces proviennent exclusivement de <span className="text-white font-semibold underline decoration-blue-500 underline-offset-4">professionnels de l'immobilier identifiés</span>.
             </p>
           </div>
           
           <div className="space-y-4">
-            <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-              <p className="text-sm text-slate-300">
-                La plateforme ne modifie ni les prix, ni les descriptions, ni les coordonnées.
+            <div className="bg-slate-800/50 p-5 rounded-2xl border border-slate-700 hover:border-blue-500/50 transition-colors">
+              <p className="text-sm text-slate-200">
+                La plateforme ne modifie ni les prix, ni les descriptions, ni les coordonnées des annonces.
               </p>
             </div>
-            <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-              <p className="text-sm text-slate-300">
-                Chaque bien renvoie systématiquement vers sa source officielle (information fiable).
+            <div className="bg-slate-800/50 p-5 rounded-2xl border border-slate-700 hover:border-blue-500/50 transition-colors">
+              <p className="text-sm text-slate-200">
+                Chaque bien renvoie systématiquement vers sa source officielle, garantissant une information fiable.
               </p>
             </div>
-            <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
-              <p className="text-sm text-slate-300">
-                Une vision claire sans intermédiaire ni biais commercial.
+            <div className="bg-slate-800/50 p-5 rounded-2xl border border-slate-700 hover:border-blue-500/50 transition-colors">
+              <p className="text-sm text-slate-200">
+                Une vision claire du marché en Martinique, sans intermédiaire ni biais commercial.
               </p>
             </div>
           </div>
@@ -114,7 +109,7 @@ export default function AboutPage() {
             href="/contact" 
             className="inline-flex items-center gap-2 bg-blue-600 text-white px-10 py-5 rounded-full font-bold hover:bg-blue-700 transition-all transform hover:scale-105 shadow-xl"
           >
-            Une question ? Contactez-nous
+            Nous contacter
           </a>
         </div>
 
