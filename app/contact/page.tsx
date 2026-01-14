@@ -16,7 +16,7 @@ export default function ContactPage() {
 
   // Chargement robuste de l'animation pour éviter les erreurs localhost/Turbopack
   useEffect(() => {
-    fetch("/animations/contact.json")
+    fetch("/animations/Contact.json")
       .then((res) => res.json())
       .then((data) => setAnimationData(data))
       .catch((err) => console.error("Erreur Lottie:", err));
