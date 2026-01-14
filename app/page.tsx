@@ -284,6 +284,19 @@ export default function Home() {
           </div>
         </div>
 
+      {/* Compteur d'annonces */}
+<div className="max-w-7xl mx-auto px-4 mb-6">
+  <div className="inline-flex items-center gap-2 bg-slate-50 border border-slate-100 px-4 py-2 rounded-full shadow-sm">
+    <span className="relative flex h-2 w-2">
+      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+      <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+    </span>
+    <p className="text-[11px] font-black uppercase tracking-widest text-slate-600">
+      <span className="text-indigo-600">{filteredAnnonces.length}</span> annonces sont consultables aujourd'hui
+    </p>
+  </div>
+</div>
+        
         {/* SECTION ALERTE EMAIL */}
         <div id="alerte-email" className="bg-blue-600 rounded-[2rem] p-6 md:p-10 mb-12 flex flex-col lg:flex-row items-center justify-between gap-8 shadow-lg border-2 border-blue-400/20 relative overflow-hidden group">
           <div className="flex-1 z-10 w-full">
