@@ -256,24 +256,24 @@ export default function Home() {
     <main className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col font-sans overflow-x-hidden">
       
       {/* HEADER */}
-<header className="bg-white py-4 px-4 md:px-6 sticky top-0 z-40 shadow-sm print:hidden">
-  <div className="max-w-7xl mx-auto flex justify-between items-center">
-    <div className="flex items-center gap-3">
-      <span className="text-3xl">🏠</span>
-      <div>
-        <h2 className="text-lg md:text-xl font-black text-blue-700 leading-none tracking-tight">Achat Immo Martinique</h2>
-        <p className="text-[8px] md:text-[9px] text-slate-400 font-bold uppercase tracking-[0.15em] mt-0.5">Plateforme Indépendante</p>
-      </div>
-    </div>
-    <nav className="hidden md:flex items-center gap-8">
-      <a href="#" className="text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors">Accueil</a>
-      <a href="#" className="text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors">À propos</a>
-      <a href="#" className="text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors">Mentions légales</a>
-      <a href="#" className="text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors">Méthodologie</a>
-      <a href="#" className="text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors">Contact</a>
-    </nav>
-  </div>
-</header>
+      <header className="bg-white py-4 px-4 md:px-6 sticky top-0 z-40 shadow-sm print:hidden">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">🏠</span>
+            <div>
+              <h2 className="text-lg md:text-xl font-black text-blue-700 leading-none tracking-tight">Achat Immo Martinique</h2>
+              <p className="text-[8px] md:text-[9px] text-slate-400 font-bold uppercase tracking-[0.15em] mt-0.5">Plateforme Indépendante</p>
+            </div>
+          </div>
+          <nav className="hidden md:flex items-center gap-8">
+            <a href="#" className="text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors">Accueil</a>
+            <a href="#" className="text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors">À propos</a>
+            <a href="#" className="text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors">Mentions légales</a>
+            <a href="#" className="text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors">Méthodologie</a>
+            <a href="#" className="text-sm font-semibold text-slate-700 hover:text-blue-600 transition-colors">Contact</a>
+          </nav>
+        </div>
+      </header>
 
       {/* HERO SECTION */}
       <section className="bg-gradient-to-br from-blue-700 via-blue-600 to-cyan-500 text-white py-12 md:py-16 px-6 print:hidden">
@@ -286,12 +286,12 @@ export default function Home() {
               <strong>AchatImmoMartinique</strong> est un outil indépendant qui centralise les annonces publiées par les agences immobilières de l'île.
             </p>
             <div className="flex flex-wrap justify-center md:justify-start gap-3 md:gap-4">
-   <a href="#listing" className="bg-white text-blue-700 px-6 py-3.5 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-black shadow-2xl hover:scale-105 transition-all uppercase text-[10px] md:text-xs tracking-widest">Voir les annonces</a>
-   <button onClick={fetchAnnonces} className="bg-blue-900/40 backdrop-blur-md border border-white/20 px-5 py-3.5 md:px-6 md:py-4 rounded-xl md:rounded-2xl font-bold hover:bg-blue-800/50 transition-all text-[10px] md:text-xs uppercase tracking-widest">🔄 Actualiser</button>
-   <button onClick={handleToggleOnlyFavorites} className={`flex items-center gap-2 px-5 py-3.5 md:px-6 md:py-4 rounded-xl md:rounded-2xl font-bold transition-all text-[10px] md:text-xs uppercase tracking-widest ${showOnlyFavorites ? 'bg-red-500 text-white border border-red-400' : 'bg-white/20 backdrop-blur-md border border-white/30 text-white hover:bg-white/30'}`}>
-     ❤️ Mes Favoris ({favorites.length})
-   </button>
-</div>
+              <a href="#listing" className="bg-white text-blue-700 px-6 py-3.5 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-black shadow-2xl hover:scale-105 transition-all uppercase text-[10px] md:text-xs tracking-widest">Voir les annonces</a>
+              <button onClick={fetchAnnonces} className="bg-blue-900/40 backdrop-blur-md border border-white/20 px-5 py-3.5 md:px-6 md:py-4 rounded-xl md:rounded-2xl font-bold hover:bg-blue-800/50 transition-all text-[10px] md:text-xs uppercase tracking-widest">🔄 Actualiser</button>
+              <button onClick={handleToggleOnlyFavorites} className={`flex items-center gap-2 px-5 py-3.5 md:px-6 md:py-4 rounded-xl md:rounded-2xl font-bold transition-all text-[10px] md:text-xs uppercase tracking-widest ${showOnlyFavorites ? 'bg-red-500 text-white border border-red-400' : 'bg-white/20 backdrop-blur-md border border-white/30 text-white hover:bg-white/30'}`}>
+                ❤️ Mes Favoris ({favorites.length})
+              </button>
+            </div>
           </div>
           <div className="w-full max-w-[200px] md:max-w-md">
             {animationData && <Lottie animationData={animationData} loop className="drop-shadow-2xl" />}
