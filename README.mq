@@ -1,0 +1,24 @@
+# 🏠 Mon Projet Immobilier - Next.js
+
+Bienvenue sur le dépôt de mon site de petites annonces immobilières.
+
+## 📝 Description
+Ce projet est un site moderne de présentation immobilière construit avec le framework **Next.js**. Il permet d'afficher des biens, de gérer des composants réutilisables et offre une navigation fluide.
+
+## 🛠️ Ma structure technique
+D'après mon architecture actuelle :
+- `/app` : Contient les routes et les pages de mon site.
+- `/components` : Contient les éléments réutilisables (boutons, cartes, menu).
+- `/public` : Contient mes images et logos.
+- `next.config.ts` : Ma configuration Next.js.
+- `postcss.config.mjs` & `tailwind.config.ts` : Pour le design et le style.
+
+## 🚀 Comment l'installer en local
+Si vous voulez récupérer ce projet sur votre machine :
+1. Téléchargez le dossier.
+2. Ouvrez un terminal dans le dossier.
+3. Installez les modules : `npm install`
+4. Lancez le site : `npm run dev`
+
+## 🌍 Déploiement
+Le site est configuré pour être déployé automatiquement sur **Vercel** à chaque mise à jour sur ce dépôt GitHub.
