@@ -313,17 +313,17 @@ export default function Home() {
         {/* SECTION ALERTE EMAIL */}
         <div id="alerte-email" className="bg-blue-600 rounded-[2rem] p-6 md:p-10 mb-12 flex flex-col lg:flex-row items-center justify-between gap-8 shadow-lg border-2 border-blue-400/20 relative overflow-hidden group">
           <div className="flex-1 z-10 w-full">
-            <div className="flex items-center gap-4 mb-4">
-              <span className="text-3xl bg-white/20 p-3 rounded-2xl backdrop-blur-sm">🔔</span>
-              <h3 className="text-white text-xl md:text-2xl font-black">Ne ratez plus aucune opportunité !</h3>
-            </div>
-            <div className="flex flex-wrap gap-2 mb-6">
-              <span className="text-blue-100 text-[10px] font-black uppercase tracking-widest w-full mb-1 opacity-70">Critères sélectionnés :</span>
-              <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10">📍 {filterCommune || "Toute la Martinique"}</div>
-              <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10">🏠 {filterType || "Tous types"}</div>
-              <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10">💰 {filterPrixMax ? `${parseInt(filterPrixMax).toLocaleString()}€ max` : "Budget illimité"}</div>
-            </div>
-          </div>
+  <div className="flex items-center gap-4 mb-4">
+    <span className="text-3xl bg-white/20 p-3 rounded-2xl backdrop-blur-sm">🔔</span>
+    <h3 className="text-white text-xl md:text-2xl font-black">Ne ratez plus aucune opportunité !</h3>
+  </div>
+  <div className="flex flex-wrap gap-2 mb-6">
+    <p className="text-blue-100 text-[10px] font-black uppercase tracking-widest w-full mb-1 opacity-70">Critères sélectionnés :</p>
+    <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10">📍 {filterCommune || "Toute la Martinique"}</div>
+    <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10">🏠 {filterType || "Tous types"}</div>
+    <div className="bg-blue-800/40 text-blue-50 px-4 py-2 rounded-xl text-xs font-bold border border-white/10">💰 {filterPrixMax ? `${parseInt(filterPrixMax).toLocaleString()}€ max` : "Budget illimité"}</div>
+  </div>
+</div>
           <form onSubmit={handleAlertSubmit} className="flex flex-col sm:flex-row w-full lg:w-auto gap-3 z-10">
             <input 
               type="email" 
