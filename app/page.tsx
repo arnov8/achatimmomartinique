@@ -242,7 +242,7 @@ export default function Home() {
               PIPELINE DE LIENS D'ANNONCES IMMOBILIERES
             </p>
             <p className="text-base md:text-xl opacity-95 mb-8 font-medium leading-relaxed max-w-2xl">
-              <strong>AchatImmoMartinique</strong> centralise les annonces publiées par les professionnels et agences immobilières de l'île.
+              <strong>AchatImmoMartinique</strong> centralise toutes les annonces immobilières de Martinique publiées par les principaux professionnels du marché (agences, réseaux, experts locaux). Plus besoin de multiplier les recherches sur différents sites : trouvez rapidement maisons, appartements, terrains, programmes neufs et opportunités d’investissement au cœur de l’île.
             </p>
             <div className="flex flex-wrap justify-center md:justify-start gap-3 md:gap-4">
               <a href="#listing" className="bg-white text-blue-700 px-6 py-3.5 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-black shadow-2xl hover:scale-105 transition-all uppercase text-[10px] md:text-xs tracking-widest">Voir les annonces</a>
