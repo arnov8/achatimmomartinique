@@ -48,10 +48,11 @@ export default function Home() {
   const [loyerEstime, setLoyerEstime] = useState(800);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 20;
+  const itemsPerPage = 24; // Augmenté pour correspondre à une grille de 6
 
   const SHEET_URL = process.env.NEXT_PUBLIC_SHEET_URL || "";
 
+  // Fonctions de calcul (Conservées tel quel)
   useEffect(() => {
     const savedFavs = localStorage.getItem("mes-favoris-immo");
     if (savedFavs) { setFavorites(JSON.parse(savedFavs)); }
@@ -216,16 +217,25 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col font-sans overflow-x-hidden">
       
-      {/* HEADER PREMIUM - LOGO UNIQUE */}
+      {/* HEADER PREMIUM - REORGANISÉ */}
       <header className="bg-white/80 backdrop-blur-md py-4 px-4 md:px-6 border-b border-slate-100 sticky top-0 z-40 shadow-sm print:hidden">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex flex-col">
+        <div className="max-w-[1600px] mx-auto flex justify-between items-center">
+          <div className="flex flex-col cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
             <h2 className="text-xl md:text-2xl font-black text-blue-700 leading-none tracking-tighter">AchatImmoMartinique</h2>
             <p className="text-[9px] md:text-[10px] text-slate-400 font-bold uppercase tracking-[0.15em] mt-1">Plateforme de centralisation d'annonces immo</p>
           </div>
-          <div className="flex items-center gap-3">
-            <button onClick={handleToggleOnlyFavorites} className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-[10px] md:text-xs font-bold transition-all shadow-sm ${showOnlyFavorites ? 'bg-red-500 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
-              ❤️ <span className="hidden sm:inline">Mes Favoris</span> ({favorites.length})
+          
+          <div className="flex items-center gap-4 md:gap-8">
+            <nav className="hidden lg:flex gap-6 text-[10px] font-black uppercase tracking-widest text-slate-500">
+              <a href="#" className="hover:text-blue-600 transition-all">Rechercher</a>
+              <a href="#alerte-section" className="hover:text-blue-600 transition-all">Alerte Email</a>
+              <a href="/contact" className="hover:text-blue-600 transition-all">Contact</a>
+            </nav>
+            <button 
+              onClick={handleToggleOnlyFavorites} 
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-[10px] font-black transition-all shadow-sm ${showOnlyFavorites ? 'bg-red-500 text-white' : 'bg-red-50 text-red-600 hover:bg-red-100'}`}
+            >
+              ❤️ Mes Favoris ({favorites.length})
             </button>
           </div>
         </div>
@@ -242,7 +252,7 @@ export default function Home() {
               PIPELINE DE LIENS D'ANNONCES IMMOBILIERES
             </p>
             <p className="text-base md:text-xl opacity-95 mb-8 font-medium leading-relaxed max-w-2xl">
-              <strong>AchatImmoMartinique</strong> centralise toutes les annonces immobilières de Martinique publiées par les principaux professionnels du marché (agences, réseaux, experts locaux). Plus besoin de multiplier les recherches sur différents sites : trouvez rapidement maisons, appartements, terrains, programmes neufs et opportunités d’investissement en Martinique.
+              <strong>AchatImmoMartinique</strong> centralise toutes les annonces immobilières de Martinique publiées par les principaux professionnels du marché. Plus besoin de multiplier les recherches.
             </p>
             <div className="flex flex-wrap justify-center md:justify-start gap-3 md:gap-4">
               <a href="#listing" className="bg-white text-blue-700 px-6 py-3.5 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-black shadow-2xl hover:scale-105 transition-all uppercase text-[10px] md:text-xs tracking-widest">Voir les annonces</a>
@@ -256,9 +266,9 @@ export default function Home() {
       </section>
 
       {/* FILTRES & SECTION ALERTE */}
-      <section id="listing" className="max-w-[1600px] mx-auto px-4 md:px-6 w-full pt-8 print:hidden">
-        <div className="bg-white p-5 md:p-10 rounded-[2rem] md:rounded-[2.5rem] shadow-xl border border-slate-100 mb-6">
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 md:gap-6 items-end">
+      <section id="listing" className="max-w-[1800px] mx-auto px-4 md:px-6 w-full pt-8 print:hidden">
+        <div className="bg-white p-5 md:p-8 rounded-[2rem] shadow-xl border border-slate-100 mb-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 items-end">
             <FilterBox label="Ville" onChange={setFilterCommune}>
               <option value="">Martinique</option>
               {communesDispo.map(c => <option key={c} value={c}>{c}</option>)}
@@ -286,99 +296,81 @@ export default function Home() {
           </div>
         </div>
 
-        {/* SECTION ALERTE MODERNE - JUSTE SOUS LES DROPDOWNS */}
-        <div className="bg-blue-600 rounded-[2rem] p-6 md:p-8 mb-12 flex flex-col md:flex-row items-center justify-between gap-6 shadow-lg shadow-blue-200 border-2 border-blue-400/20 relative overflow-hidden group">
+        {/* SECTION ALERTE - RÉÉDUQUE LES CHOIX */}
+        <div id="alerte-section" className="bg-blue-600 rounded-[2rem] p-6 md:p-10 mb-12 flex flex-col lg:flex-row items-center justify-between gap-8 shadow-lg shadow-blue-200 border-2 border-blue-400/20 relative overflow-hidden group">
           <div className="absolute top-0 right-0 -mt-8 -mr-8 w-32 h-32 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
-          <div className="flex items-center gap-5 z-10">
-            <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-sm">
-              <span className="text-3xl">🔔</span>
+          <div className="flex-1 z-10">
+            <div className="flex items-center gap-4 mb-4">
+              <span className="text-3xl bg-white/20 p-3 rounded-2xl backdrop-blur-sm">🔔</span>
+              <h3 className="text-white text-xl md:text-2xl font-black">Ne ratez plus aucune opportunité !</h3>
             </div>
-            <div>
-              <h3 className="text-white text-lg md:text-xl font-black">Ne ratez plus aucune opportunité !</h3>
-              <p className="text-blue-100 text-xs md:text-sm font-medium">Recevez les nouvelles annonces correspondant aux filtres que vous venez de sélectionner.</p>
+            
+            {/* RÉCAPITULATIF DES CHOIX VISUEL */}
+            <div className="flex flex-wrap gap-2 mb-4">
+              <span className="bg-blue-800/40 text-blue-50 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-white/10">📍 {filterCommune || "Toute la Martinique"}</span>
+              <span className="bg-blue-800/40 text-blue-50 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-white/10">🏠 {filterType || "Tous types"}</span>
+              <span className="bg-blue-800/40 text-blue-50 px-3 py-1.5 rounded-lg text-[10px] font-bold border border-white/10">💰 {filterPrixMax ? `Max ${parseInt(filterPrixMax).toLocaleString()}€` : "Sans limite de prix"}</span>
             </div>
+            <p className="text-blue-100 text-[11px] font-medium opacity-80 uppercase tracking-widest">Recevez les nouvelles annonces correspondantes dès leur publication.</p>
           </div>
-          <form onSubmit={handleAlertSubmit} className="flex flex-col sm:flex-row w-full md:w-auto gap-3 z-10">
+
+          <form onSubmit={handleAlertSubmit} className="flex flex-col sm:flex-row w-full lg:w-auto gap-3 z-10">
             <input 
               type="email" 
-              placeholder="Votre email..." 
+              placeholder="votre-email@exemple.com" 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="bg-white text-slate-900 border-none rounded-xl px-5 py-3.5 text-sm outline-none focus:ring-4 focus:ring-white/20 w-full md:w-64 font-bold"
+              className="bg-white text-slate-900 border-none rounded-xl px-6 py-4 text-sm outline-none focus:ring-4 focus:ring-white/30 w-full lg:w-80 font-bold"
               required
             />
-            <button className="bg-slate-900 text-white px-8 py-3.5 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-black transition-all shadow-xl active:scale-95 whitespace-nowrap">
+            <button className="bg-slate-900 text-white px-8 py-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-xl active:scale-95 whitespace-nowrap">
               {alertStatus || "Activer l'alerte"}
             </button>
           </form>
         </div>
 
-        {/* GRILLE ANNONCES */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-8 mb-16">
+        {/* GRILLE ANNONCES - 6 COLONNES SUR LARGE DESKTOP */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-16">
           {loading ? (
             <div className="col-span-full text-center py-20 text-slate-300 font-bold uppercase tracking-widest animate-pulse italic">Synchronisation...</div>
           ) : paginatedData.map((annonce, index) => {
             const isFav = favorites.includes(annonce.LIEN);
             const p = parseInt(annonce.PRIX_NORMALISE);
             const surface = parseInt(annonce.SURFACE);
-            const prixM2 = surface > 0 ? Math.round(p / surface) : 0;
             const dateAnnonce = new Date(annonce["DATE ET HEURE"]);
             const isNew = (new Date().getTime() - dateAnnonce.getTime()) / (1000 * 3600 * 24) < 3;
             const isInvestReady = ["Appartement", "Maison", "Villa", "Immeuble"].includes(annonce.TYPE_NORMALISE);
             const { ecart, applicable } = getEcartPrixM2(annonce);
 
             return (
-              <div key={index} className="bg-white rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col group relative">
+              <div key={index} className="bg-white rounded-[1.5rem] overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-500 flex flex-col group relative">
                 {isNew && (
-                  <div className="absolute top-4 left-4 z-10 bg-green-500 text-white text-[8px] font-black px-2 py-1 rounded-full shadow-lg uppercase tracking-widest">Nouveau</div>
+                  <div className="absolute top-3 left-3 z-10 bg-green-500 text-white text-[7px] font-black px-2 py-0.5 rounded-full shadow-lg uppercase tracking-widest">Nouveau</div>
                 )}
-                <div className="p-5 md:p-8 flex flex-col h-full">
-                  <div className="flex justify-between items-start mb-4 md:mb-6">
-                    <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-wider">{annonce.TYPE_NORMALISE}</span>
-                    <div className="flex gap-2">
-                      <button onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent("Bonjour ! Ce bien m'intéresse : " + annonce.TITRE + " à " + annonce.COMMUNE_NORMALISEE + ". Lien : " + annonce.LIEN)}`, "_blank")} className="w-7 h-7 md:w-8 md:h-8 flex items-center justify-center bg-green-50 rounded-full hover:bg-green-100">
-                        <svg className="w-3.5 h-3.5 md:w-4 md:h-4 text-green-600" fill="currentColor" viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3L72 359.2l-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.4 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.2-16.4-14.6-27.4-32.7-30.6-38.2-3.2-5.6-.3-8.6 2.4-11.4 2.5-2.5 5.5-6.5 8.3-9.7 2.8-3.2 3.7-5.5 5.6-9.2 1.9-3.7 1-6.9-.5-9.7-1.4-2.8-12.4-29.8-17-41-4.5-10.9-9.1-9.4-12.4-9.6-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.8 23.5 9.2 31.5 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.5 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
-                      </button>
-                      <button onClick={() => toggleFavorite(annonce.LIEN)} className={`text-xl md:text-2xl transition-all ${isFav ? 'scale-110' : 'opacity-20 hover:opacity-100'}`}>❤️</button>
-                    </div>
+                <div className="p-4 flex flex-col h-full">
+                  <div className="flex justify-between items-start mb-3">
+                    <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider">{annonce.TYPE_NORMALISE}</span>
+                    <button onClick={() => toggleFavorite(annonce.LIEN)} className={`text-lg transition-all ${isFav ? 'scale-110' : 'opacity-20 hover:opacity-100'}`}>❤️</button>
                   </div>
                   
-                  <div className="mb-4 md:mb-6">
-                    <p className="text-2xl md:text-3xl font-black text-slate-900 leading-none">{p.toLocaleString('fr-FR')} €</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter italic">ESTIM. FRAIS DE NOTAIRE: {Math.round(p * 0.08).toLocaleString('fr-FR')} €</p>
-                      {applicable && (
-                        <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-md ${ecart > 0 ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
-                          {ecart > 0 ? '+' : ''}{ecart.toFixed(0)}% /m²
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <h3 className="text-lg md:text-xl font-black text-slate-800 mb-4 truncate">{annonce.COMMUNE_NORMALISEE}</h3>
-                  <div className="flex gap-2 md:gap-3 mb-6 md:mb-8">
-                    <span className="bg-slate-50 border border-slate-100 px-2 py-1 rounded-lg text-[10px] md:text-xs font-bold text-slate-500">📐 {annonce.SURFACE}m²</span>
-                    <span className="bg-slate-50 border border-slate-100 px-2 py-1 rounded-lg text-[10px] md:text-xs font-bold text-slate-500">🚪 {annonce["NOMBRE DE PIECES"]}p.</span>
-                  </div>
-
-                  {isFav && (
-                    <div className="mb-6 animate-in slide-in-from-top-2">
-                      <label className="text-[8px] font-black uppercase text-slate-400 mb-2 block tracking-widest">📝 Ma note privée</label>
-                      <textarea 
-                        value={notes[annonce.LIEN] || ""} 
-                        onChange={(e) => updateNote(annonce.LIEN, e.target.value)}
-                        placeholder="Ex: Appeler lundi..."
-                        className="w-full bg-yellow-50/50 border border-yellow-100 rounded-xl p-3 text-[10px] h-16 resize-none outline-none shadow-inner"
-                      />
-                    </div>
-                  )}
-
-                  <div className="mt-auto space-y-2 md:space-y-3">
-                    <button onClick={() => { setSelectedAnnonce(annonce); setApport(Math.round(p * 0.1)); }} className="w-full bg-blue-50 text-blue-700 py-3.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-blue-100">📊 Simuler mon prêt</button>
-                    {isInvestReady && (
-                      <button onClick={() => setInvestAnnonce(annonce)} className="w-full bg-indigo-50 text-indigo-700 py-3.5 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-indigo-100">📈 Calcul Rendement</button>
+                  <div className="mb-3">
+                    <p className="text-lg font-black text-slate-900 leading-none">{p.toLocaleString('fr-FR')} €</p>
+                    {applicable && (
+                        <div className={`text-[7px] font-black mt-1 inline-block px-1 rounded ${ecart > 0 ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
+                          {ecart > 0 ? '+' : ''}{ecart.toFixed(0)}% /m² moy.
+                        </div>
                     )}
-                    <a href={annonce.LIEN} target="_blank" rel="noopener noreferrer" className="block w-full bg-slate-900 text-white text-center py-3.5 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-blue-600 transition-all">Voir l'original</a>
+                  </div>
+
+                  <h3 className="text-xs font-black text-slate-800 mb-2 truncate uppercase tracking-tighter">{annonce.COMMUNE_NORMALISEE}</h3>
+                  <div className="flex gap-2 mb-4">
+                    <span className="text-[9px] font-bold text-slate-400">📐 {annonce.SURFACE}m²</span>
+                    <span className="text-[9px] font-bold text-slate-400">🚪 {annonce["NOMBRE DE PIECES"]}p.</span>
+                  </div>
+
+                  <div className="mt-auto space-y-1.5 pt-4 border-t border-slate-50">
+                    <a href={annonce.LIEN} target="_blank" rel="noopener noreferrer" className="block w-full bg-slate-900 text-white text-center py-2.5 rounded-lg font-black text-[8px] uppercase tracking-widest hover:bg-blue-600 transition-all">Détails annonce</a>
+                    <button onClick={() => { setSelectedAnnonce(annonce); setApport(Math.round(p * 0.1)); }} className="w-full bg-slate-50 text-slate-500 py-2 rounded-lg text-[7px] font-black uppercase tracking-widest hover:bg-blue-50 hover:text-blue-600 transition-colors">Simuler</button>
                   </div>
                 </div>
               </div>
@@ -389,117 +381,86 @@ export default function Home() {
         {/* PAGINATION */}
         {!loading && totalPages > 1 && (
           <div className="flex justify-center items-center gap-4 mb-20">
-            <button onClick={() => {setCurrentPage(p => Math.max(1, p - 1)); window.scrollTo({top: 800, behavior: 'smooth'})}} disabled={currentPage === 1} className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-100 shadow-sm disabled:opacity-20 hover:bg-slate-50 transition-all">←</button>
-            <span className="font-black text-slate-600 bg-white px-8 py-3 rounded-2xl shadow-sm border border-slate-50 text-sm">{currentPage} / {totalPages}</span>
-            <button onClick={() => {setCurrentPage(p => Math.min(totalPages, p + 1)); window.scrollTo({top: 800, behavior: 'smooth'})}} disabled={currentPage === totalPages} className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-100 shadow-sm disabled:opacity-20 hover:bg-slate-50 transition-all">→</button>
+            <button onClick={() => {setCurrentPage(p => Math.max(1, p - 1)); window.scrollTo({top: 800, behavior: 'smooth'})}} disabled={currentPage === 1} className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-100 shadow-sm disabled:opacity-20 hover:bg-slate-50">←</button>
+            <span className="font-black text-slate-600 bg-white px-6 py-2.5 rounded-xl shadow-sm border border-slate-50 text-xs">{currentPage} / {totalPages}</span>
+            <button onClick={() => {setCurrentPage(p => Math.min(totalPages, p + 1)); window.scrollTo({top: 800, behavior: 'smooth'})}} disabled={currentPage === totalPages} className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-slate-100 shadow-sm disabled:opacity-20 hover:bg-slate-50">→</button>
           </div>
         )}
       </section>
 
-      {/* NOUVELLE SECTION SERVICES */}
-      <section className="bg-white py-20 px-6 border-t border-slate-100 print:hidden">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 leading-tight">Accompagnement complet pour votre projet immobilier.</h2>
-            <p className="text-slate-500 text-lg leading-relaxed font-medium">
-              Que vous cherchiez votre résidence principale, un pied-à-terre, une maison de vacances ou un bien à fort potentiel locatif, <span className="text-blue-600 font-bold">AchatImmoMartinique.com</span> est là pour vous accompagner à chaque étape de votre projet immobilier en Martinique.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {[
-              { icon: "🔔", title: "Alerte Annonce", desc: "Soyez le premier notifié" },
-              { icon: "⚖️", title: "Frais de notaire", desc: "Estimation immédiate" },
-              { icon: "📊", title: "Simulation prêt", desc: "Calculez vos mensualités" },
-              { icon: "📈", title: "Rendement", desc: "Analysez la rentabilité" },
-              { icon: "❤️", title: "Favoris", desc: "Sauvegardez vos biens" },
-              { icon: "💬", title: "WhatsApp", desc: "Partage rapide à un ami" },
-            ].map((item, i) => (
-              <div key={i} className="bg-slate-50 rounded-[2rem] p-6 text-center hover:bg-blue-50 hover:scale-105 transition-all duration-300 group cursor-default">
-                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300 inline-block">{item.icon}</div>
-                <h3 className="font-black text-[10px] uppercase tracking-widest text-slate-900 mb-2">{item.title}</h3>
-                <p className="text-[10px] text-slate-400 font-bold leading-tight">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FOOTER PREMIUM */}
-      <footer className="bg-slate-50 border-t border-slate-100 pt-16 pb-10 px-6 mt-auto print:hidden">
+      {/* FOOTER PREMIUM - MISE À JOUR TEXTES ET STRUCTURE */}
+      <footer className="bg-slate-900 text-white pt-20 pb-10 px-6 mt-auto print:hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-1 md:col-span-2">
-            <h3 className="text-xl md:text-2xl font-black text-blue-700 mb-2">AchatImmoMartinique</h3>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-6">Plateforme de centralisation d'annonces immo</p>
-            <p className="text-slate-500 text-xs md:text-sm leading-relaxed max-w-md">
-              Le premier agrégateur immobilier dédié exclusivement à la Martinique. Notre mission est d'offrir une transparence totale sur le marché local.
+            <h3 className="text-xl font-black text-blue-400 mb-2">AchatImmoMartinique</h3>
+            <p className="text-[9px] font-bold text-slate-500 uppercase tracking-widest mb-6 italic">L'efficacité pour la recherche immobilière</p>
+            <p className="text-slate-400 text-xs leading-relaxed max-w-md">
+              AchatImmoMartinique est un site indépendant de référencement d’annonces immobilières. Le site ne commercialise aucun bien et n’intervient pas dans les transactions. Seules les annonces présentes sur les sites des professionnels immobiliers font foi.
             </p>
           </div>
           <div>
-            <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6">Navigation</h4>
-            <ul className="space-y-4 text-xs md:text-sm font-bold text-slate-600">
-              <li><a href="#" className="hover:text-blue-600 transition-colors">Accueil</a></li>
-              <li><a href="#listing" className="hover:text-blue-600 transition-colors">Annonces</a></li>
-              <li><button onClick={handleToggleOnlyFavorites} className="hover:text-blue-600 transition-colors">Mes Favoris</button></li>
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-6 underline decoration-blue-500 decoration-2 underline-offset-8">Navigation</h4>
+            <ul className="space-y-4 text-[11px] font-bold text-slate-300">
+              <li><a href="#" className="hover:text-blue-400 transition-colors">Rechercher un bien</a></li>
+              <li><a href="#alerte-section" className="hover:text-blue-400 transition-colors">Alerte Email</a></li>
+              <li><button onClick={handleToggleOnlyFavorites} className="hover:text-blue-400 transition-colors text-left">Mes favoris</button></li>
             </ul>
           </div>
           <div>
-            <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-6">Informations</h4>
-            <ul className="space-y-4 text-xs md:text-sm font-bold text-slate-600">
-              <li><a href="#" className="hover:text-blue-600 transition-colors">Mentions légales</a></li>
-              <li><a href="#" className="hover:text-blue-600 transition-colors">Contact</a></li>
-              <li className="text-[9px] opacity-40 uppercase tracking-tighter italic">MAJ: {new Date().toLocaleDateString('fr-FR')}</li>
+            <h4 className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-6 underline decoration-blue-500 decoration-2 underline-offset-8">Information</h4>
+            <ul className="space-y-4 text-[11px] font-bold text-slate-300">
+              <li><a href="/mentions-legales" className="hover:text-blue-400 transition-colors">Mentions légales</a></li>
+              <li><a href="/methodologie" className="hover:text-blue-400 transition-colors">Méthodologie</a></li>
+              <li><a href="/contact" className="hover:text-blue-400 transition-colors">Contact</a></li>
+              <li className="text-[9px] text-slate-600 uppercase italic">MAJ : {new Date().toLocaleDateString('fr-FR')}</li>
             </ul>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto border-t border-slate-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest">© {new Date().getFullYear()} • AchatImmoMartinique</p>
-          <div className="flex gap-6 grayscale opacity-50">
-             <span className="text-[10px] font-black uppercase tracking-widest">Made in Martinique 🏝️</span>
+        <div className="max-w-7xl mx-auto border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500">
+          <p className="text-[9px] font-bold uppercase tracking-widest">© {new Date().getFullYear()} • AchatImmoMartinique</p>
+          <div className="flex gap-6">
+             <span className="text-[9px] font-black uppercase tracking-[0.2em]">L'EFFICACITÉ POUR LA RECHERCHE IMMOBILIÈRE</span>
           </div>
         </div>
       </footer>
 
-      {/* MODALE PRÊT */}
+      {/* MODALE PRÊT (Conservée) */}
       {selectedAnnonce && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-md" onClick={() => setSelectedAnnonce(null)}></div>
-          <div className="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in duration-300 print:shadow-none">
-            <div className="bg-blue-600 p-10 text-white">
-              <div className="flex justify-between items-center mb-6">
-                <span className="text-[9px] font-black uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full">Projet Bancaire</span>
+          <div className="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" onClick={() => setSelectedAnnonce(null)}></div>
+          <div className="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in duration-300">
+            <div className="bg-blue-600 p-8 text-white">
+              <div className="flex justify-between items-center mb-4">
+                <span className="text-[9px] font-black uppercase tracking-widest">Simulation Bancaire</span>
                 <button onClick={() => setSelectedAnnonce(null)} className="text-xl">✕</button>
               </div>
-              <p className="text-5xl font-black mb-2">{Math.round(mensualite).toLocaleString('fr-FR')} €</p>
-              <p className="text-[10px] opacity-80 font-bold uppercase tracking-widest">Par mois (estimation)</p>
+              <p className="text-4xl font-black mb-1">{Math.round(mensualite).toLocaleString('fr-FR')} €/mois</p>
+              <p className="text-[9px] opacity-70 font-bold uppercase tracking-widest">Estimation indicative</p>
             </div>
-            <div className="p-10 space-y-8">
+            <div className="p-8 space-y-6 text-slate-800">
               <div>
-                <label className="flex justify-between text-[9px] font-black uppercase text-slate-400 mb-4 italic">Apport : {apport.toLocaleString()} €</label>
+                <label className="flex justify-between text-[9px] font-black uppercase text-slate-400 mb-2 italic">Apport personnel : {apport.toLocaleString()} €</label>
                 <input type="range" min="0" max={parseInt(selectedAnnonce.PRIX_NORMALISE)} step="5000" value={apport} onChange={(e) => setApport(parseInt(e.target.value))} className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-blue-600" />
               </div>
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[9px] font-black uppercase text-slate-400 block mb-2">Durée (ans)</label>
-                  <select value={duree} onChange={(e) => setDuree(parseInt(e.target.value))} className="w-full bg-slate-50 border-none rounded-xl p-4 font-black text-sm">
+                  <label className="text-[9px] font-black uppercase text-slate-400 block mb-1">Durée</label>
+                  <select value={duree} onChange={(e) => setDuree(parseInt(e.target.value))} className="w-full bg-slate-50 border-none rounded-xl p-3 font-black text-sm">
                     {[15, 20, 25].map(y => <option key={y} value={y}>{y} ans</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="text-[9px] font-black uppercase text-slate-400 block mb-2">Taux (%)</label>
-                  <input type="number" step="0.1" value={taux} onChange={(e) => setTaux(parseFloat(e.target.value))} className="w-full bg-slate-50 border-none rounded-xl p-4 font-black text-sm" />
+                  <label className="text-[9px] font-black uppercase text-slate-400 block mb-1">Taux (%)</label>
+                  <input type="number" step="0.1" value={taux} onChange={(e) => setTaux(parseFloat(e.target.value))} className="w-full bg-slate-50 border-none rounded-xl p-3 font-black text-sm" />
                 </div>
               </div>
-              <div className="flex flex-col gap-3">
-                <button onClick={() => window.print()} className="w-full bg-slate-100 text-slate-900 py-4 rounded-xl font-black uppercase text-[10px] tracking-widest border border-slate-200">Exporter en PDF</button>
-                <button onClick={() => setSelectedAnnonce(null)} className="w-full bg-slate-900 text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest">Fermer la simulation</button>
-              </div>
+              <button onClick={() => setSelectedAnnonce(null)} className="w-full bg-slate-900 text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest">Quitter</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* MODALE RENDEMENT */}
+      {/* MODALE RENDEMENT (Conservée) */}
       {investAnnonce && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-indigo-900/70 backdrop-blur-md" onClick={() => setInvestAnnonce(null)}></div>
@@ -525,10 +486,7 @@ export default function Home() {
                 <label className="text-[9px] font-black uppercase text-slate-400 block mb-2 italic">Loyer mensuel estimé : {loyerEstime} €</label>
                 <input type="range" min="300" max="5000" step="50" value={loyerEstime} onChange={(e) => setLoyerEstime(parseInt(e.target.value))} className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
               </div>
-              <div className="bg-slate-50 p-6 rounded-2xl text-[10px] text-slate-500 leading-relaxed">
-                ℹ️ Le calcul prend en compte une estimation forfaitaire de 30% de charges (taxe foncière, gestion, entretien). Cela reste une estimation indicative.
-              </div>
-              <button onClick={() => setInvestAnnonce(null)} className="w-full bg-indigo-600 text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-xl shadow-indigo-200">Fermer</button>
+              <button onClick={() => setInvestAnnonce(null)} className="w-full bg-indigo-600 text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest">Fermer</button>
             </div>
           </div>
         </div>
@@ -540,11 +498,11 @@ export default function Home() {
 
 function FilterBox({ label, children, onChange }: { label: string; children: React.ReactNode; onChange: (val: string) => void }) {
   return (
-    <div className="flex flex-col gap-3">
-      <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">{label}</label>
+    <div className="flex flex-col gap-2">
+      <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 ml-1">{label}</label>
       <select 
         onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-4 text-xs font-bold text-slate-700 focus:ring-4 focus:ring-blue-500/10 outline-none appearance-none cursor-pointer hover:bg-slate-100 transition-all"
+        className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-[11px] font-bold text-slate-700 outline-none hover:bg-slate-100 transition-all cursor-pointer"
       >
         {children}
       </select>
