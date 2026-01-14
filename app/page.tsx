@@ -262,15 +262,15 @@ export default function Home() {
 <section className="bg-gradient-to-br from-blue-700 via-blue-600 to-cyan-500 text-white py-12 md:py-16 px-6 print:hidden">
   <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12">
     <div className="flex-1 text-center md:text-left">
-      <h1 className="text-3xl md:text-6xl font-black mb-2 leading-[1.1]">
-        Les annonces immo de Martinique, enfin réunies.
-      </h1>
-      <p className="text-sm md:text-lg font-bold uppercase tracking-[0.2em] text-cyan-200 mb-6">
-        Plateforme indépendante de centralisation
-      </p>
-      <p className="text-base md:text-xl opacity-95 mb-8 font-medium leading-relaxed max-w-2xl">
-        <strong>AchatImmoMartinique</strong> centralise en temps réel les annonces publiées par les agences immobilières de l'île.
-      </p>
+  <h1 className="text-3xl md:text-6xl font-black mb-2 leading-[1.1]">
+    Les annonces immo de Martinique, enfin réunies.
+  </h1>
+  <p className="text-sm md:text-lg font-bold uppercase tracking-[0.2em] text-cyan-200 mb-6">
+    Plateforme indépendante de centralisation
+  </p>
+  <p className="text-base md:text-xl opacity-95 mb-8 font-medium leading-relaxed max-w-2xl">
+    <strong>AchatImmoMartinique</strong> centralise en temps réel les annonces publiées par les agences immobilières de l'île.
+  </p>
             <div className="flex flex-wrap justify-center md:justify-start gap-3 md:gap-4">
               <a href="#listing" className="bg-white text-blue-700 px-6 py-3.5 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-black shadow-2xl hover:scale-105 transition-all uppercase text-[10px] md:text-xs tracking-widest">Voir les annonces</a>
               <button onClick={fetchAnnonces} className="bg-blue-900/40 backdrop-blur-md border border-white/20 px-5 py-3.5 md:px-6 md:py-4 rounded-xl md:rounded-2xl font-bold hover:bg-blue-800/50 transition-all text-[10px] md:text-xs uppercase tracking-widest">🔄 Actualiser</button>
