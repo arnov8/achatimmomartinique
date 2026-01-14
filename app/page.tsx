@@ -330,7 +330,7 @@ export default function Home() {
                     <span className="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider">{annonce.TYPE_NORMALISE}</span>
                     <div className="flex gap-2">
                       <button 
-  onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent("Bien immo : " + annonce.TITRE + " " + annonce.LIEN)}`, "_blank")} 
+  onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent("J'ai trouvé ce bien immo : " + annonce.TITRE + " " + annonce.LIEN)}` Donne moi ton avis. Je l'ai trouvé via AchatImmoMartinique.com, "_blank")} 
   className="opacity-40 hover:opacity-100 transition-all flex items-center justify-center"
   title="Partager sur WhatsApp"
 >
