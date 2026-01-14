@@ -336,6 +336,10 @@ export default function Home() {
                   
                   <div className="mb-4">
                     <p className="text-xl md:text-2xl font-black text-slate-900 leading-none">{p.toLocaleString('fr-FR')} €</p>
+                    {/* Estimation Frais de Notaire */}
+<div className="text-[9px] font-bold text-slate-500 mt-1 uppercase tracking-tight">
+  Estim. frais de notaire : {Math.round(p * 0.08).toLocaleString('fr-FR')} €
+</div>
                     {applicable && (
                       <div className={`text-[8px] font-black mt-2 inline-block px-1.5 py-0.5 rounded ${ecart > 0 ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
                         {ecart > 0 ? '+' : ''}{ecart.toFixed(0)}% / m² moy.
