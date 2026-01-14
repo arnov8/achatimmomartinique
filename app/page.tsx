@@ -20,7 +20,6 @@ type AnnonceRaw = {
   "DATE ET HEURE": string;
 };
 
-// Composant réutilisable pour les filtres
 const FilterBox = ({ label, onChange, children }: { label: string, onChange: (val: string) => void, children: React.ReactNode }) => (
   <div className="flex flex-col gap-2">
     <label className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">{label}</label>
@@ -48,6 +47,10 @@ export default function Home() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
+
+  // Système d'alerte
+  const [email, setEmail] = useState("");
+  const [alertStatus, setAlertStatus] = useState("");
 
   const [selectedAnnonce, setSelectedAnnonce] = useState<AnnonceRaw | null>(null);
   const [apport, setApport] = useState(0);
@@ -96,6 +99,21 @@ export default function Home() {
   };
 
   useEffect(() => { fetchAnnonces(); }, []);
+
+  const handleAlertSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAlertStatus("⏳ Création...");
+    const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSec-DdyTrrQCu4zXyvdR4GBOy0bpIfLk_3003p0AO-U9KmF7Q/formResponse";
+    const formData = new FormData();
+    formData.append("entry.1097581547", email); 
+    formData.append("entry.1184240355", filterType || "Tous les types");
+    formData.append("entry.1319234674", filterCommune || "Toute la Martinique");
+    try {
+      await fetch(FORM_URL, { method: "POST", mode: "no-cors", body: formData });
+      setAlertStatus("✅ Alerte activée !");
+      setEmail("");
+    } catch (error) { setAlertStatus("❌ Erreur"); }
+  };
 
   const toggleFavorite = (lien: string) => {
     setFavorites(prev => prev.includes(lien) ? prev.filter(id => id !== lien) : [...prev, lien]);
@@ -149,7 +167,7 @@ export default function Home() {
     const prixM2Annonce = prix / surface;
     const moyennes = prixMoyensParCommune[commune];
     if (!moyennes) return { ecart: 0, applicable: false };
-    if (type === "Appartement" || type === "Maison" || type === "Villa") {
+    if (["Appartement", "Maison", "Villa"].includes(type)) {
       if (moyennes.habitableMoyen <= 0) return { ecart: 0, applicable: false };
       return { ecart: ((prixM2Annonce - moyennes.habitableMoyen) / moyennes.habitableMoyen) * 100, applicable: true };
     } else if (type === "Terrain") {
@@ -198,28 +216,49 @@ export default function Home() {
     return { brut, net };
   }, [investAnnonce, loyerEstime]);
 
-  const communesDispo = [...new Set(annonces.map(a => a.COMMUNE_NORMALISEE))].sort();
-  const typesDispo = [...new Set(annonces.map(a => a.TYPE_NORMALISE))].sort();
+  const communesDispo = [...new Set(annonces.map(a => a.COMMUNE_NORMALISEE))].filter(c => c && c.trim() !== "").sort();
+  const typesDispo = [...new Set(annonces.map(a => a.TYPE_NORMALISE))].filter(t => t && t.toUpperCase() !== "INCONNU").sort();
 
   return (
     <main className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col font-sans overflow-x-hidden">
       
-      {/* HERO SECTION - RECTIFIÉE AVEC SLOGAN ET NOM DU SITE */}
-      <section className="bg-gradient-to-br from-blue-700 via-blue-600 to-cyan-500 text-white py-12 md:py-16 px-6 print:hidden">
+      {/* HEADER AVEC LOGO ET SLOGAN EN HAUT À GAUCHE */}
+      <header className="bg-white py-4 px-6 border-b border-slate-100 flex justify-between items-center">
+        <div className="flex flex-col">
+          <span className="text-xl md:text-2xl font-black text-blue-700 leading-none">AchatImmoMartinique</span>
+          <span className="text-[10px] md:text-xs font-bold text-slate-400 mt-1 uppercase tracking-wider">Plateforme de centralisation d'annonces immo</span>
+        </div>
+        <div className="hidden md:block">
+          <form onSubmit={handleAlertSubmit} className="flex gap-2">
+            <input 
+              type="email" 
+              placeholder="Alerte email..." 
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-blue-500/20"
+              required
+            />
+            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all">
+              {alertStatus || "Activer"}
+            </button>
+          </form>
+        </div>
+      </header>
+
+      {/* HERO SECTION */}
+      <section className="bg-gradient-to-br from-blue-700 via-blue-600 to-cyan-500 text-white py-12 md:py-20 px-6 print:hidden">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12">
           <div className="flex-1 text-center md:text-left">
             <h1 className="text-3xl md:text-6xl font-black mb-4 leading-[1.1]">
-              Les annonces immo de Martinique, enfin réunies.
+              Les annonces immo de Martinique, enfin réunies au même endroit.
             </h1>
             
-            {/* LE SLOGAN BIEN VISIBLE */}
             <p className="text-sm md:text-lg font-bold uppercase tracking-[0.2em] text-cyan-200 mb-4">
-              Plateforme indépendante de centralisation
+              PIPELINE DE LIENS D'ANNONCES IMMOBILIERES
             </p>
 
-            {/* LE NOM DU SITE EN GRAS DANS LE PARAGRAPHE */}
             <p className="text-base md:text-xl opacity-95 mb-8 font-medium leading-relaxed max-w-2xl">
-              <strong>AchatImmoMartinique</strong> centralise en temps réel les annonces publiées par les agences immobilières de l'île.
+              <strong>AchatImmoMartinique</strong> centralise les annonces publiées par les professionnels et agences immobilières de l'île.
             </p>
 
             <div className="flex flex-wrap justify-center md:justify-start gap-3 md:gap-4">
@@ -236,28 +275,25 @@ export default function Home() {
         </div>
       </section>
 
-      {/* TEXTE EXPLICATIF 1 */}
+      {/* TEXTE EXPLICATIF MODIFIÉ */}
       <section className="max-w-5xl mx-auto px-4 md:px-6 py-8 md:py-12 text-center md:text-left print:hidden">
-        <div className="grid md:grid-cols-2 gap-6 md:gap-8 items-center bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-sm border border-slate-100">
-          <p className="text-slate-600 leading-relaxed text-xs md:text-sm italic">
-            Trouver un bien immobilier en Martinique implique souvent de consulter de nombreux sites d'agences et de comparer des informations hétérogènes.
-          </p>
-          <p className="text-slate-800 font-bold leading-relaxed text-xs md:text-sm">
-            AchatImmoMartinique regroupe, en un seul point d'accès, les annonces diffusées par les agences locales.
+        <div className="bg-white p-6 md:p-10 rounded-[2rem] md:rounded-[2.5rem] shadow-sm border border-slate-100">
+          <p className="text-slate-800 font-medium leading-relaxed text-sm md:text-base">
+            <strong>AchatImmoMartinique</strong> centralise en un seul point d’accès les annonces immobilières des agences locales, pour offrir une vision claire, rapide et complète du marché martiniquais. Chaque annonce renvoie directement vers le site officiel de l’agence concernée.
           </p>
         </div>
       </section>
 
-      {/* FILTRES */}
+      {/* FILTRES NETTOYÉS */}
       <section id="listing" className="max-w-[1600px] mx-auto px-4 md:px-6 w-full pt-4 print:hidden">
         <div className="bg-white p-5 md:p-10 rounded-[2rem] md:rounded-[2.5rem] shadow-xl border border-slate-100 mb-8 md:mb-10">
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 md:gap-6 items-end">
             <FilterBox label="Ville" onChange={setFilterCommune}>
-              <option value="">Martinique</option>
+              <option value="">Toute l'île</option>
               {communesDispo.map(c => <option key={c} value={c}>{c}</option>)}
             </FilterBox>
             <FilterBox label="Type" onChange={setFilterType}>
-              <option value="">Tous</option>
+              <option value="">Tous les biens</option>
               {typesDispo.map(t => <option key={t} value={t}>{t}</option>)}
             </FilterBox>
             <FilterBox label="Pièces" onChange={setFilterPieces}>
@@ -270,11 +306,11 @@ export default function Home() {
             </FilterBox>
             <FilterBox label="Min €" onChange={setFilterPrixMin}>
               <option value="">Pas de min</option>
-              {[100000, 150000, 200000, 300000, 500000].map(p => <option key={p} value={p.toString()}>{p.toLocaleString()} €</option>)}
+              {[30000, 50000, 100000, 150000, 200000, 300000, 500000].map(p => <option key={p} value={p.toString()}>{p.toLocaleString()} €</option>)}
             </FilterBox>
             <FilterBox label="Max €" onChange={setFilterPrixMax}>
               <option value="">Pas de max</option>
-              {[200000, 300000, 400000, 500000, 1000000].map(p => <option key={p} value={p.toString()}>{p.toLocaleString()} €</option>)}
+              {[100000, 200000, 300000, 400000, 500000, 1000000].map(p => <option key={p} value={p.toString()}>{p.toLocaleString()} €</option>)}
             </FilterBox>
           </div>
         </div>
@@ -287,8 +323,6 @@ export default function Home() {
             const isFav = favorites.includes(annonce.LIEN);
             const p = parseInt(annonce.PRIX_NORMALISE);
             const surface = parseInt(annonce.SURFACE);
-            const prixM2 = surface > 0 ? Math.round(p / surface) : 0;
-            const isInvestReady = ["Appartement", "Maison", "Immeuble"].includes(annonce.TYPE_NORMALISE);
             const { ecart, applicable } = getEcartPrixM2(annonce);
 
             return (
@@ -317,23 +351,9 @@ export default function Home() {
                     <span className="bg-slate-50 border border-slate-100 px-2 py-1 rounded-lg text-[10px] md:text-xs font-bold text-slate-500">🚪 {annonce["NOMBRE DE PIECES"]}p.</span>
                   </div>
 
-                  {isFav && (
-                    <div className="mb-6">
-                      <textarea 
-                        value={notes[annonce.LIEN] || ""} 
-                        onChange={(e) => updateNote(annonce.LIEN, e.target.value)}
-                        placeholder="Ma note privée..."
-                        className="w-full bg-yellow-50/50 border border-yellow-100 rounded-xl p-3 text-[10px] h-16 resize-none outline-none"
-                      />
-                    </div>
-                  )}
-
                   <div className="mt-auto space-y-2 md:space-y-3">
                     <button onClick={() => { setSelectedAnnonce(annonce); setApport(Math.round(p * 0.1)); }} className="w-full bg-blue-50 text-blue-700 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest">📊 Simuler mon prêt</button>
-                    {isInvestReady && (
-                      <button onClick={() => setInvestAnnonce(annonce)} className="w-full bg-indigo-50 text-indigo-700 py-3 rounded-xl text-[9px] font-black uppercase tracking-widest">📈 Calcul Rendement</button>
-                    )}
-                    <a href={annonce.LIEN} target="_blank" rel="noopener noreferrer" className="block w-full bg-slate-900 text-white text-center py-3 rounded-xl font-black text-[9px] uppercase tracking-widest">Voir l'original</a>
+                    <a href={annonce.LIEN} target="_blank" rel="noopener noreferrer" className="block w-full bg-slate-900 text-white text-center py-3 rounded-xl font-black text-[9px] uppercase tracking-widest hover:bg-blue-600 transition-all">Voir l'original</a>
                   </div>
                 </div>
               </div>
@@ -342,21 +362,23 @@ export default function Home() {
         </div>
       </section>
 
-      {/* MODALES & FOOTER (Simplifiés pour le code) */}
+      {/* FOOTER */}
+      <footer className="bg-white border-t border-slate-100 py-10 px-6 mt-auto text-center">
+        <p className="text-blue-700 font-black text-xl mb-2">Achat Immo Martinique</p>
+        <p className="text-slate-400 text-xs">Pipeline de liens d'annonces immobilières - {new Date().getFullYear()}</p>
+      </footer>
+
+      {/* MODALE SIMULATEUR */}
       {selectedAnnonce && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-md">
-           <div className="bg-white w-full max-w-md rounded-[2rem] p-8 shadow-2xl">
+           <div className="bg-white w-full max-w-md rounded-[2rem] p-8 shadow-2xl relative">
+              <button onClick={() => setSelectedAnnonce(null)} className="absolute top-4 right-4 text-slate-400">✕</button>
               <h2 className="text-2xl font-black mb-4">Simulateur</h2>
               <p className="text-3xl font-black text-blue-600 mb-6">{Math.round(mensualite).toLocaleString()} € /mois</p>
               <button onClick={() => setSelectedAnnonce(null)} className="w-full bg-slate-900 text-white py-4 rounded-xl font-black uppercase">Fermer</button>
            </div>
         </div>
       )}
-
-      <footer className="bg-white border-t border-slate-100 py-10 px-6 mt-auto text-center">
-        <p className="text-blue-700 font-black text-xl mb-2">Achat Immo Martinique</p>
-        <p className="text-slate-400 text-xs">Le premier agrégateur immobilier dédié à la Martinique.</p>
-      </footer>
     </main>
   );
 }
