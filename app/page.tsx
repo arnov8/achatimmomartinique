@@ -24,7 +24,7 @@ export default function Home() {
   const [annonces, setAnnonces] = useState<AnnonceRaw[]>([]);
   const [loading, setLoading] = useState(true);
   const [animationData, setAnimationData] = useState(null);
-  
+   
   const [filterCommune, setFilterCommune] = useState("");
   const [filterType, setFilterType] = useState("");
   const [filterPieces, setFilterPieces] = useState("");
@@ -396,8 +396,37 @@ export default function Home() {
         )}
       </section>
 
+      {/* NOUVELLE SECTION SERVICES */}
+      <section className="bg-white py-20 px-6 border-t border-slate-100 print:hidden">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <h2 className="text-3xl md:text-5xl font-black text-slate-900 mb-6 leading-tight">Accompagnement complet pour votre projet immobilier.</h2>
+            <p className="text-slate-500 text-lg leading-relaxed font-medium">
+              Que vous cherchiez votre résidence principale, un pied-à-terre, une maison de vacances ou un bien à fort potentiel locatif, <span className="text-blue-600 font-bold">AchatImmoMartinique.com</span> est là pour vous accompagner à chaque étape de votre projet immobilier en Martinique.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            {[
+              { icon: "🔔", title: "Alerte Annonce", desc: "Soyez le premier notifié" },
+              { icon: "⚖️", title: "Frais de notaire", desc: "Estimation immédiate" },
+              { icon: "📊", title: "Simulation prêt", desc: "Calculez vos mensualités" },
+              { icon: "📈", title: "Rendement", desc: "Analysez la rentabilité" },
+              { icon: "❤️", title: "Favoris", desc: "Sauvegardez vos biens" },
+              { icon: "💬", title: "WhatsApp", desc: "Partage rapide à un ami" },
+            ].map((item, i) => (
+              <div key={i} className="bg-slate-50 rounded-[2rem] p-6 text-center hover:bg-blue-50 hover:scale-105 transition-all duration-300 group cursor-default">
+                <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300 inline-block">{item.icon}</div>
+                <h3 className="font-black text-[10px] uppercase tracking-widest text-slate-900 mb-2">{item.title}</h3>
+                <p className="text-[10px] text-slate-400 font-bold leading-tight">{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* FOOTER PREMIUM */}
-      <footer className="bg-white border-t border-slate-100 pt-16 pb-10 px-6 mt-auto print:hidden">
+      <footer className="bg-slate-50 border-t border-slate-100 pt-16 pb-10 px-6 mt-auto print:hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
           <div className="col-span-1 md:col-span-2">
             <h3 className="text-xl md:text-2xl font-black text-blue-700 mb-2">AchatImmoMartinique</h3>
@@ -423,7 +452,7 @@ export default function Home() {
             </ul>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto border-t border-slate-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="max-w-7xl mx-auto border-t border-slate-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest">© {new Date().getFullYear()} • AchatImmoMartinique</p>
           <div className="flex gap-6 grayscale opacity-50">
              <span className="text-[10px] font-black uppercase tracking-widest">Made in Martinique 🏝️</span>
@@ -496,16 +525,15 @@ export default function Home() {
                 <label className="text-[9px] font-black uppercase text-slate-400 block mb-2 italic">Loyer mensuel estimé : {loyerEstime} €</label>
                 <input type="range" min="300" max="5000" step="50" value={loyerEstime} onChange={(e) => setLoyerEstime(parseInt(e.target.value))} className="w-full h-2 bg-slate-100 rounded-lg appearance-none cursor-pointer accent-indigo-600" />
               </div>
-              <div className="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
-                <p className="text-[10px] text-indigo-700 font-bold leading-relaxed italic">
-                  * Le calcul net inclut une estimation de 30% de charges (Taxe foncière, gestion, vacances locatives, entretien) et les frais de notaire à l'achat.
-                </p>
+              <div className="bg-slate-50 p-6 rounded-2xl text-[10px] text-slate-500 leading-relaxed">
+                ℹ️ Le calcul prend en compte une estimation forfaitaire de 30% de charges (taxe foncière, gestion, entretien). Cela reste une estimation indicative.
               </div>
-              <button onClick={() => setInvestAnnonce(null)} className="w-full bg-slate-900 text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest">Fermer</button>
+              <button onClick={() => setInvestAnnonce(null)} className="w-full bg-indigo-600 text-white py-4 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-xl shadow-indigo-200">Fermer</button>
             </div>
           </div>
         </div>
       )}
+
     </main>
   );
 }
