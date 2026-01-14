@@ -242,7 +242,7 @@ export default function Home() {
               PIPELINE DE LIENS D'ANNONCES IMMOBILIERES
             </p>
             <p className="text-base md:text-xl opacity-95 mb-8 font-medium leading-relaxed max-w-2xl">
-              <strong>AchatImmoMartinique</strong> centralise toutes les annonces immobilières de Martinique publiées par les principaux professionnels du marché (agences, réseaux, experts locaux). Plus besoin de multiplier les recherches sur différents sites : trouvez rapidement maisons, appartements, terrains, programmes neufs et opportunités d’investissement au cœur de l’île.
+              <strong>AchatImmoMartinique</strong> centralise toutes les annonces immobilières de Martinique publiées par les principaux professionnels du marché (agences, réseaux, experts locaux). Plus besoin de multiplier les recherches sur différents sites : trouvez rapidement maisons, appartements, terrains, programmes neufs et opportunités d’investissement en Martinique.
             </p>
             <div className="flex flex-wrap justify-center md:justify-start gap-3 md:gap-4">
               <a href="#listing" className="bg-white text-blue-700 px-6 py-3.5 md:px-8 md:py-4 rounded-xl md:rounded-2xl font-black shadow-2xl hover:scale-105 transition-all uppercase text-[10px] md:text-xs tracking-widest">Voir les annonces</a>
@@ -295,7 +295,7 @@ export default function Home() {
             </div>
             <div>
               <h3 className="text-white text-lg md:text-xl font-black">Ne ratez plus aucune opportunité !</h3>
-              <p className="text-blue-100 text-xs md:text-sm font-medium">Recevez les nouvelles annonces correspondant à vos filtres actuels.</p>
+              <p className="text-blue-100 text-xs md:text-sm font-medium">Recevez les nouvelles annonces correspondant aux filtres que vous venez de sélectionner.</p>
             </div>
           </div>
           <form onSubmit={handleAlertSubmit} className="flex flex-col sm:flex-row w-full md:w-auto gap-3 z-10">
@@ -346,7 +346,7 @@ export default function Home() {
                   <div className="mb-4 md:mb-6">
                     <p className="text-2xl md:text-3xl font-black text-slate-900 leading-none">{p.toLocaleString('fr-FR')} €</p>
                     <div className="flex items-center gap-2 mt-2">
-                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter italic">+ notaire: {Math.round(p * 0.08).toLocaleString('fr-FR')} €</p>
+                      <p className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter italic">ESTIM. FRAIS DE NOTAIRE: {Math.round(p * 0.08).toLocaleString('fr-FR')} €</p>
                       {applicable && (
                         <span className={`text-[8px] font-black px-1.5 py-0.5 rounded-md ${ecart > 0 ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
                           {ecart > 0 ? '+' : ''}{ecart.toFixed(0)}% /m²
