@@ -8,7 +8,7 @@ export default function LegalPage() {
 
   // Chargement robuste de l'animation pour Turbopack
   useEffect(() => {
-    fetch("/animations/legal.json")
+    fetch("/animations/Legal.json")
       .then((res) => res.json())
       .then((data) => setAnimationData(data))
       .catch((err) => console.error("Erreur chargement Lottie:", err));
