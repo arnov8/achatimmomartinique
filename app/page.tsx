@@ -262,12 +262,16 @@ export default function Home() {
 <section className="bg-gradient-to-br from-blue-700 via-blue-600 to-cyan-500 text-white py-12 md:py-16 px-6 print:hidden">
   <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12">
     <div className="flex-1 text-center md:text-left">
-  <h1 className="text-3xl md:text-6xl font-black mb-2 leading-[1.1]">
+  <h1 className="text-3xl md:text-6xl font-black mb-4 leading-[1.1]">
     Les annonces immo de Martinique, enfin réunies.
   </h1>
-  <p className="text-sm md:text-lg font-bold uppercase tracking-[0.2em] text-cyan-200 mb-6">
+  
+  {/* LE SLOGAN AVEC UNE MARGE EN DESSOUS */}
+  <p className="text-sm md:text-lg font-bold uppercase tracking-[0.2em] text-cyan-200 mb-4">
     Plateforme indépendante de centralisation
   </p>
+
+  {/* LE NOM DU SITE EN GRAS AVEC MARGE */}
   <p className="text-base md:text-xl opacity-95 mb-8 font-medium leading-relaxed max-w-2xl">
     <strong>AchatImmoMartinique</strong> centralise en temps réel les annonces publiées par les agences immobilières de l'île.
   </p>
