@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 export default function LegalPage() {
   const [animationData, setAnimationData] = useState(null);
 
-  // Chargement robuste de l'animation pour Turbopack
+  // Chargement de l'animation Lottie
   useEffect(() => {
     fetch("/animations/Legal.json")
       .then((res) => res.json())
@@ -41,16 +41,16 @@ export default function LegalPage() {
               <p>Le site internet AchatImmoMartinique, accessible à l'adresse <strong>https://www.achatimmomartinique.com</strong>, est édité par :</p>
               <ul className="list-disc pl-5 space-y-2">
                 <li><strong>Antilles Salons</strong></li>
-                <li>Statut juridique : société</li>
+                <li>Statut juridique : Société</li>
                 <li>Adresse : CC de Bellevue 97200 Fort-de-France</li>
                 <li>Adresse électronique : contact@achatimmomartinique.com</li>
               </ul>
             </Section>
 
             <Section title="2. HÉBERGEMENT">
-              <p>Le site est hébergé par : <strong>Wix.com Ltd et o2Switch</strong></p>
+              <p>Le site est propulsé par <strong>Vercel Inc.</strong> (Hébergement applicatif) et <strong>o2Switch</strong> (Gestion DNS et emails).</p>
               <p>Sites internet : 
-                <a href="https://www.wix.com" target="_blank" rel="noopener noreferrer" className="ml-1 text-blue-600 hover:underline">wix.com</a> et 
+                <a href="https://vercel.com" target="_blank" rel="noopener noreferrer" className="ml-1 text-blue-600 hover:underline">vercel.com</a> et 
                 <a href="https://www.o2switch.fr" target="_blank" rel="noopener noreferrer" className="ml-1 text-blue-600 hover:underline">o2switch.fr</a>
               </p>
             </Section>
@@ -91,12 +91,29 @@ export default function LegalPage() {
               <p>Toute reproduction sans autorisation écrite préalable de l'éditeur est strictement interdite.</p>
             </Section>
 
-            <Section title="9. SIGNALEMENT ET RECTIFICATION">
-              <p>Toute agence souhaitant signaler une erreur ou demander la suppression d'une annonce peut en faire la demande via la page <a href="/contact" className="text-blue-600 underline">Contact</a>.</p>
+            <Section title="9. SIGNALEMENT, RECTIFICATION ET SUPPRESSION D’ANNONCES">
+              <p>Toute agence immobilière ou ayant droit souhaitant :</p>
+              <ul className="list-disc pl-5 space-y-1">
+                <li>signaler une erreur,</li>
+                <li>demander la rectification d’une information,</li>
+                <li>solliciter la suppression d’une annonce référencée,</li>
+              </ul>
+              <p>peut en faire la demande via la page <a href="/contact" className="text-blue-600 underline font-bold">Contact</a> du site.</p>
+              <p className="text-sm italic text-slate-500">Les demandes seront examinées dans les meilleurs délais, sans reconnaissance préalable de responsabilité.</p>
             </Section>
 
-            <Section title="10. DROIT APPLICABLE">
-              <p>Les présentes mentions légales sont régies par le droit français. En cas de litige, les tribunaux français seront seuls compétents.</p>
+            <Section title="10. DONNÉES PERSONNELLES">
+              <p>Les modalités de traitement des données personnelles sont détaillées dans la page <strong>Politique de confidentialité</strong>.</p>
+              <p>AchatImmoMartinique ne collecte que les données strictement nécessaires à son fonctionnement, notamment via le formulaire de contact, et ne procède à aucune cession de données à des tiers.</p>
+            </Section>
+
+            <Section title="11. DROIT APPLICABLE">
+              <p>Les présentes mentions légales sont régies par le <strong>droit français</strong>.</p>
+              <p>En cas de litige relatif à l’utilisation du site, et à défaut de résolution amiable, les tribunaux français seront seuls compétents.</p>
+            </Section>
+
+            <Section title="12. ACCEPTATION DES MENTIONS LÉGALES">
+              <p>L’accès et l’utilisation du site AchatImmoMartinique impliquent l’acceptation pleine et entière des présentes mentions légales par l’utilisateur.</p>
             </Section>
 
           </div>
