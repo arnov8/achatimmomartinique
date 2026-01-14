@@ -355,11 +355,7 @@ export default function Home() {
                   <div className="flex justify-between items-start mb-4">
                     <span className="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-wider">{annonce.TYPE_NORMALISE}</span>
                     <div className="flex gap-2">
-                      <button 
-  onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`J'ai trouvé ce bien immo : ${annonce.TITRE}\nLien : ${annonce.LIEN}\nAnnonce trouvée avec AchatImmoMartinique.com 👍🏽`)}`, "_blank")} 
-  className="opacity-40 hover:opacity-100 transition-all flex items-center justify-center"
-  title="Partager sur WhatsApp"
->
+                      <button onClick={() => window.open(`https://wa.me/?text=${encodeURIComponent(`J'ai trouvé ce bien immo : ${annonce.TITRE}\nLien : ${annonce.LIEN}\nAnnonce trouvée avec AchatImmoMartinique.com 👍🏽`)}`, "_blank")} className="opacity-40 hover:opacity-100 transition-all flex items-center justify-center" title="Partager sur WhatsApp">
   <svg 
     xmlns="http://www.w3.org/2000/svg" 
     viewBox="0 0 448 512" 
@@ -574,4 +570,3 @@ function FilterBox({ label, children, onChange }: { label: string; children: Rea
       </div>
     </div>
   );
-}
