@@ -52,6 +52,8 @@ export default function Home() {
 
   const SHEET_URL = process.env.NEXT_PUBLIC_SHEET_URL || "";
 
+  const [investorMode, setInvestorMode] = useState(false);
+
   useEffect(() => {
     const savedFavs = localStorage.getItem("mes-favoris-immo");
     if (savedFavs) { setFavorites(JSON.parse(savedFavs)); }
@@ -283,7 +285,18 @@ export default function Home() {
             </FilterBox>
           </div>
         </div>
-
+      {/* Switch Mode Investisseur */}
+<div className="max-w-[1600px] mx-auto px-4 md:px-6 mb-4 flex justify-end">
+  <button 
+    onClick={() => setInvestorMode(!investorMode)}
+    className={`flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all ${investorMode ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-slate-200 bg-white text-slate-500'}`}
+  >
+    <span className="text-lg">{investorMode ? '📈' : '🏠'}</span>
+    <span className="text-[10px] font-black uppercase tracking-widest">
+      {investorMode ? 'Mode Investisseur Actif' : 'Passer en Mode Investisseur'}
+    </span>
+  </button>
+</div>
       {/* Compteur d'annonces */}
 <div className="max-w-[1600px] mx-auto px-4 md:px-6 mb-8">
   <div className="inline-flex items-center gap-3 bg-white border border-slate-100 px-5 py-2.5 rounded-2xl shadow-sm">
@@ -359,27 +372,35 @@ export default function Home() {
                     </div>
                   </div>
                   
-                  <div className="mb-4">
-                    <p className="text-xl md:text-2xl font-black text-slate-900 leading-none">{p.toLocaleString('fr-FR')} €</p>
-                    {/* Estimation Frais de Notaire */}
-<div className="text-[9px] font-bold text-slate-500 mt-1 uppercase tracking-tight">
-  Estim. frais de notaire : {Math.round(p * 0.08).toLocaleString('fr-FR')} €
+                  <div className="mb-4 min-h-[80px]">
+  {!investorMode ? (
+    <>
+      <p className="text-xl md:text-2xl font-black text-slate-900 leading-none">
+        {p.toLocaleString('fr-FR')} €
+      </p>
+      <div className="text-[9px] font-bold text-slate-500 mt-1 uppercase tracking-tight">
+        Estim. frais de notaire : {Math.round(p * 0.08).toLocaleString('fr-FR')} €
+      </div>
+    </>
+  ) : (
+    <div className="bg-indigo-600 p-3 rounded-xl text-white">
+      <div className="flex justify-between items-center mb-1">
+        <span className="text-[8px] font-black uppercase opacity-80">Rendement Brut</span>
+        <span className="text-lg font-black">{((800 * 12 / p) * 100).toFixed(1)}%</span>
+      </div>
+      <div className="flex justify-between items-center">
+        <span className="text-[8px] font-black uppercase opacity-80">Potentiel Airbnb</span>
+        <span className="text-[10px] font-black italic">~110€ / nuit</span>
+      </div>
+    </div>
+  )}
+  
+  {applicable && !investorMode && (
+    <div className={`text-[8px] font-black mt-2 inline-block px-1.5 py-0.5 rounded ${ecart > 0 ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
+      {ecart > 0 ? '+' : ''}{ecart.toFixed(0)}% / m² moy.
+    </div>
+  )}
 </div>
-                    {applicable && (
-                      <div className={`text-[8px] font-black mt-2 inline-block px-1.5 py-0.5 rounded ${ecart > 0 ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
-                        {ecart > 0 ? '+' : ''}{ecart.toFixed(0)}% / m² moy.
-                      </div>
-                    )}
-                  </div>
-
-                  <h3 className="text-sm font-black text-slate-800 mb-3 truncate uppercase tracking-tight">{annonce.COMMUNE_NORMALISEE}</h3>
-                  <div className="flex gap-2 mb-6">
-                    <span className="text-[10px] font-bold text-slate-400">📐 {annonce.SURFACE}m²</span>
-                    <span className="text-[10px] font-bold text-slate-400">🚪 {annonce["NOMBRE DE PIECES"]}p.</span>
-                  </div>
-
-                  {isFav && (
-                    <div className="mb-4">
                       <textarea value={notes[annonce.LIEN] || ""} onChange={(e) => updateNote(annonce.LIEN, e.target.value)} placeholder="Note privée..." className="w-full bg-yellow-50/50 border border-yellow-100 rounded-xl p-3 text-[9px] h-12 resize-none outline-none font-medium" />
                     </div>
                   )}
