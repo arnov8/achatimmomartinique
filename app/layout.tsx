@@ -1,14 +1,13 @@
-import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-// 1. CONFIGURATION SEO
-export const metadata: Metadata = {
-  title: "Achat Immo Martinique | Annonces immobilières centralisées",
-  description: "Trouvez votre futur bien en Martinique. Toutes les annonces des agences immobilières regroupées gratuitement sur une seule plateforme.",
-  keywords: ["immobilier Martinique", "achat maison Martinique", "annonces immobilières", "appartement Martinique"],
+const inter = Inter({ subsets: ["latin"] });
+
+export const metadata = {
+  title: "AchatImmoMartinique - Toutes les annonces immobilières",
+  description: "Plateforme de centralisation d'annonces immobilières en Martinique",
 };
 
-// 2. STRUCTURE DU SITE
 export default function RootLayout({
   children,
 }: {
@@ -16,12 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body className="antialiased text-slate-900 bg-[#f8fafc]">
-        {/* On place la Navbar ici pour qu'elle soit visible partout */}
-        
-        {/* Le contenu de tes pages s'affiche ici */}
-        {children}
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }
