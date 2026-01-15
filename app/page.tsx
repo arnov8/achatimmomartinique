@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Lottie from "lottie-react";
 import Papa from "papaparse";
 
-// Nouveaux Imports
+// CORRECTION DES CHEMINS ICI :
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import AnnonceCard from "./components/home/AnnonceCard";
