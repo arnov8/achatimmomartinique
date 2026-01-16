@@ -182,8 +182,7 @@ const filteredAnnonces = useMemo(() => {
       return matchCommune && matchType && matchPieces && matchPrixMin && matchPrixMax && matchSurface;
     });
   }, [annonces, filterCommune, filterType, filterPieces, filterSurface, filterPrixMin, filterPrixMax]);
-
-  // On remet la pagination sur la liste filtrée simple
+  
   const paginatedData = filteredAnnonces.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
