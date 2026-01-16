@@ -168,9 +168,9 @@ export default function Home() {
     return { ecart: 0, applicable: false };
   };
 
-  // On calcule la liste qui est à la fois FILTRÉE et TRIÉE
-  // ON FILTRE ET ON TRIE D'UN COUP
+  // --- BLOC LOGIQUE UNIQUE (FILTRE + TRI + PAGINATION) ---
   const filteredAndSortedAnnonces = useMemo(() => {
+    // 1. On filtre les résultats
     let result = annonces.filter((annonce) => {
       const matchCommune = filterCommune === "" || annonce.COMMUNE_NORMALISEE === filterCommune;
       const matchType = filterType === "" || annonce.TYPE_NORMALISE === filterType;
@@ -178,17 +178,20 @@ export default function Home() {
       return matchCommune && matchType && matchPieces;
     });
 
+    // 2. On trie les résultats filtrés
     return [...result].sort((a, b) => {
-      const prixA = parseFloat(a.PRIX_NORMALISE) || 0;
-      const prixB = parseFloat(b.PRIX_NORMALISE) || 0;
-      if (sortBy === "prix-asc") return prixA - prixB;
-      if (sortBy === "prix-desc") return prixB - prixA;
-      // Par défaut : Tri par date (le plus récent en haut)
+      const pA = parseFloat(a.PRIX_NORMALISE.replace(/[^0-9.]/g, "")) || 0;
+      const pB = parseFloat(b.PRIX_NORMALISE.replace(/[^0-9.]/g, "")) || 0;
+      
+      if (sortBy === "prix-asc") return pA - pB;
+      if (sortBy === "prix-desc") return pB - pA;
+      
+      // Par défaut : plus récent (on gère les dates Martinique)
       return new Date(b["DATE ET HEURE"]).getTime() - new Date(a["DATE ET HEURE"]).getTime();
     });
   }, [annonces, filterCommune, filterType, filterPieces, sortBy]);
 
-  // ON DÉFINIT LA PAGINATION SUR LA LISTE TRIÉE (ET PAS SUR 'annonces')
+  // 3. LA VARIABLE D'AFFICHAGE DOIT UTILISER LA LISTE TRIÉE
   const paginatedData = filteredAndSortedAnnonces.slice(0, 20);
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
