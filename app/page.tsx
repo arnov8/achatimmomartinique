@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Lottie from "lottie-react";
 import Papa from "papaparse";
 
-// COMPOSANTS
+// CORRECTION DES CHEMINS ICI :
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import AnnonceCard from "./components/home/AnnonceCard";
@@ -14,155 +14,386 @@ import StickyFilter from "./components/home/StickyFilter";
 import AnnonceSkeleton from "./components/home/AnnonceSkeleton";
 
 type AnnonceRaw = {
-  TITRE: string; TYPE_NORMALISE: string; TYPE: string; COMMUNE_NORMALISEE: string;
-  LOCALISATION: string; PRIX_NORMALISE: string; PRIX: string; LIEN: string;
-  SURFACE: string; "NOMBRE DE PIECES": string; "NOMBRE APPARTS": string; 
-  SOCIETE: string; "DATE ET HEURE": string;
+  TITRE: string;
+  TYPE_NORMALISE: string;
+  TYPE: string;
+  COMMUNE_NORMALISEE: string;
+  LOCALISATION: string;
+  PRIX_NORMALISE: string;
+  PRIX: string;
+  LIEN: string;
+  SURFACE: string;
+  "NOMBRE DE PIECES": string;
+  "NOMBRE APPARTS": string; 
+  SOCIETE: string;
+  "DATE ET HEURE": string;
 };
 
 export default function Home() {
+  // --- TOUTE VOTRE LOGIQUE ACTUELLE (CONSERVÉE) ---
   const [annonces, setAnnonces] = useState<AnnonceRaw[]>([]);
   const [loading, setLoading] = useState(true);
   const [animationData, setAnimationData] = useState(null);
   const [filterCommune, setFilterCommune] = useState("");
   const [filterType, setFilterType] = useState("");
+  const [filterPieces, setFilterPieces] = useState("");
+  const [filterSurface, setFilterSurface] = useState("");
   const [filterPrixMin, setFilterPrixMin] = useState("");
   const [filterPrixMax, setFilterPrixMax] = useState("");
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [notes, setNotes] = useState<Record<string, string>>({});
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
-  const [notes, setNotes] = useState<{[key: string]: string}>({});
   const [investorMode, setInvestorMode] = useState(false);
+  const [email, setEmail] = useState("");
+  const [alertStatus, setAlertStatus] = useState("");
   const [selectedAnnonce, setSelectedAnnonce] = useState<AnnonceRaw | null>(null);
   const [apport, setApport] = useState(0);
+  const [duree, setDuree] = useState(20);
+  const [taux, setTaux] = useState(3.8);
   const [investAnnonce, setInvestAnnonce] = useState<AnnonceRaw | null>(null);
+  const [loyerEstime, setLoyerEstime] = useState(800);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 20;
+
+  const SHEET_URL = process.env.NEXT_PUBLIC_SHEET_URL || "";
 
   useEffect(() => {
-    fetch("https://raw.githubusercontent.com/Antho972/scrapping_immo/refs/heads/main/all_annonces.csv")
-      .then(r => r.text()).then(csv => {
-        Papa.parse(csv, { header: true, skipEmptyLines: true, complete: (res) => {
-          setAnnonces(res.data as AnnonceRaw[]); setLoading(false);
-        }});
-      });
-    fetch("https://assets9.lottiefiles.com/packages/lf20_m6zptbeu.json").then(r => r.json()).then(setAnimationData);
-    setFavorites(JSON.parse(localStorage.getItem("favorites") || "[]"));
-    setNotes(JSON.parse(localStorage.getItem("notes") || "{}"));
+    const savedFavs = localStorage.getItem("mes-favoris-immo");
+    if (savedFavs) { setFavorites(JSON.parse(savedFavs)); }
+    const savedNotes = localStorage.getItem("mes-notes-immo");
+    if (savedNotes) { setNotes(JSON.parse(savedNotes)); }
   }, []);
 
-  const toggleFavorite = (id: string) => {
-    const newF = favorites.includes(id) ? favorites.filter(f => f !== id) : [...favorites, id];
-    setFavorites(newF); localStorage.setItem("favorites", JSON.stringify(newF));
+  useEffect(() => { localStorage.setItem("mes-favoris-immo", JSON.stringify(favorites)); }, [favorites]);
+  useEffect(() => { localStorage.setItem("mes-notes-immo", JSON.stringify(notes)); }, [notes]);
+
+  useEffect(() => {
+    fetch("/animations/search-house.json")
+      .then((res) => res.json())
+      .then((data) => setAnimationData(data))
+      .catch((err) => console.error("Erreur Lottie:", err));
+  }, []);
+
+  const fetchAnnonces = () => {
+    setLoading(true);
+    Papa.parse(SHEET_URL, {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        const data = (results.data as AnnonceRaw[]).filter(a => 
+          a.LIEN && a.PRIX_NORMALISE && parseInt(a.PRIX_NORMALISE) >= 10000
+        );
+        setAnnonces(data);
+        setLoading(false);
+      },
+    });
   };
 
-  const filteredAnnonces = useMemo(() => {
-    return annonces.filter(a => {
-      if (showOnlyFavorites && !favorites.includes(a.LIEN)) return false;
-      if (filterCommune && a.COMMUNE_NORMALISEE !== filterCommune) return false;
-      if (filterType && a.TYPE_NORMALISE !== filterType) return false;
-      const p = parseInt(a.PRIX_NORMALISE);
-      if (filterPrixMin && p < parseInt(filterPrixMin)) return false;
-      if (filterPrixMax && p > parseInt(filterPrixMax)) return false;
-      return true;
-    });
-  }, [annonces, filterCommune, filterType, filterPrixMin, filterPrixMax, favorites, showOnlyFavorites]);
+  useEffect(() => { fetchAnnonces(); }, []);
 
-  const simulation = useMemo(() => {
-    if (!selectedAnnonce) return null;
-    const cap = parseInt(selectedAnnonce.PRIX_NORMALISE) - apport;
-    const m = (cap * (0.04/12)) / (1 - Math.pow(1 + (0.04/12), -300));
-    return { mensualite: Math.round(m) };
-  }, [selectedAnnonce, apport]);
+  const toggleFavorite = (lien: string) => {
+    setFavorites(prev => prev.includes(lien) ? prev.filter(id => id !== lien) : [...prev, lien]);
+  };
+
+  const updateNote = (lien: string, text: string) => {
+    setNotes(prev => ({ ...prev, [lien]: text }));
+  };
+
+  const handleToggleOnlyFavorites = () => {
+    setShowOnlyFavorites(!showOnlyFavorites);
+    setCurrentPage(1);
+    document.getElementById('listing')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleAlertSubmit = async (email: string, criteria: any) => {
+    const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSec-DdyTrrQCu4zXyvdR4GBOy0bpIfLk_3003p0AO-U9KmF7Q/formResponse";
+    const formData = new FormData();
+    formData.append("entry.1097581547", email); 
+    formData.append("entry.1184240355", criteria.type);
+    formData.append("entry.1319234674", criteria.commune);
+    formData.append("entry.624227201", criteria.prixMax);
+    // On ajoute les précisions supplémentaires dans un champ note si nécessaire
+    // formData.append("entry.VOTRE_ID_NOTE", criteria.extra); 
+
+    await fetch(FORM_URL, { method: "POST", mode: "no-cors", body: formData });
+  };
+
+  const prixMoyensParCommune = useMemo(() => {
+    const stats: Record<string, { habitableTotal: number; habitableCount: number; terrainTotal: number; terrainCount: number; }> = {};
+    annonces.forEach(a => {
+      const commune = a.COMMUNE_NORMALISEE;
+      const prix = parseInt(a.PRIX_NORMALISE);
+      const surface = parseInt(a.SURFACE);
+      const type = a.TYPE_NORMALISE;
+      if (!commune || !prix || !surface || surface <= 0) return;
+      if (!stats[commune]) { stats[commune] = { habitableTotal: 0, habitableCount: 0, terrainTotal: 0, terrainCount: 0 }; }
+      const prixM2 = prix / surface;
+      if (["Appartement", "Maison", "Villa"].includes(type)) {
+        stats[commune].habitableTotal += prixM2;
+        stats[commune].habitableCount += 1;
+      } else if (type === "Terrain") {
+        stats[commune].terrainTotal += prixM2;
+        stats[commune].terrainCount += 1;
+      }
+    });
+    const moyennes: Record<string, { habitableMoyen: number; terrainMoyen: number }> = {};
+    Object.keys(stats).forEach(commune => {
+      const s = stats[commune];
+      moyennes[commune] = {
+        habitableMoyen: s.habitableCount > 0 ? s.habitableTotal / s.habitableCount : 0,
+        terrainMoyen: s.terrainCount > 0 ? s.terrainTotal / s.terrainCount : 0
+      };
+    });
+    return moyennes;
+  }, [annonces]);
+
+  const getEcartPrixM2 = (annonce: AnnonceRaw) => {
+    const commune = annonce.COMMUNE_NORMALISEE;
+    const prix = parseInt(annonce.PRIX_NORMALISE);
+    const surface = parseInt(annonce.SURFACE);
+    const type = annonce.TYPE_NORMALISE;
+    if (!commune || !prix || !surface || surface <= 0) return { ecart: 0, applicable: false };
+    const prixM2Annonce = prix / surface;
+    const moyennes = prixMoyensParCommune[commune];
+    if (!moyennes) return { ecart: 0, applicable: false };
+    if (["Appartement", "Maison", "Villa"].includes(type)) {
+      if (moyennes.habitableMoyen <= 0) return { ecart: 0, applicable: false };
+      return { ecart: ((prixM2Annonce - moyennes.habitableMoyen) / moyennes.habitableMoyen) * 100, applicable: true };
+    } else if (type === "Terrain") {
+      if (moyennes.terrainMoyen <= 0) return { ecart: 0, applicable: false };
+      return { ecart: ((prixM2Annonce - moyennes.terrainMoyen) / moyennes.terrainMoyen) * 100, applicable: true };
+    }
+    return { ecart: 0, applicable: false };
+  };
+
+  const filteredData = useMemo(() => {
+    const filtered = annonces.filter(a => {
+      if (showOnlyFavorites && !favorites.includes(a.LIEN)) return false;
+      const p = parseInt(a.PRIX_NORMALISE);
+      const matchCommune = !filterCommune || a.COMMUNE_NORMALISEE === filterCommune;
+      const matchType = !filterType || a.TYPE_NORMALISE === filterType;
+      const piecesVal = parseInt(a["NOMBRE DE PIECES"]);
+      const matchPieces = !filterPieces || (filterPieces === "5" ? piecesVal >= 5 : piecesVal === parseInt(filterPieces));
+      const matchSurface = !filterSurface || parseInt(a.SURFACE) >= parseInt(filterSurface);
+      const matchPrixMin = !filterPrixMin || p >= parseInt(filterPrixMin);
+      const matchPrixMax = !filterPrixMax || p <= parseInt(filterPrixMax);
+      return matchCommune && matchType && matchPieces && matchSurface && matchPrixMin && matchPrixMax;
+    });
+    return filtered.sort((a, b) => parseInt(a.PRIX_NORMALISE) - parseInt(b.PRIX_NORMALISE));
+  }, [annonces, filterCommune, filterType, filterPieces, filterSurface, filterPrixMin, filterPrixMax, favorites, showOnlyFavorites]);
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const mensualite = useMemo(() => {
+    if (!selectedAnnonce) return 0;
+    const prix = parseInt(selectedAnnonce.PRIX_NORMALISE);
+    const capital = (prix * 1.08) - apport;
+    if (capital <= 0) return 0;
+    const r = (taux / 100) / 12;
+    const n = duree * 12;
+    return (capital * r) / (1 - Math.pow(1 + r, -n));
+  }, [selectedAnnonce, apport, duree, taux]);
+
+  const rendementData = useMemo(() => {
+    if (!investAnnonce) return { brut: 0, net: 0 };
+    const prixAchat = parseInt(investAnnonce.PRIX_NORMALISE);
+    const prixTotal = prixAchat * 1.08;
+    const annuel = loyerEstime * 12;
+    const brut = (annuel / prixAchat) * 100;
+    const net = ((annuel * 0.70) / prixTotal) * 100;
+    return { brut, net };
+  }, [investAnnonce, loyerEstime]);
+
+  const communesDispo = [...new Set(annonces.map(a => a.COMMUNE_NORMALISEE))].filter(c => c && c.trim() !== "").sort();
+  const typesDispo = [...new Set(annonces.map(a => a.TYPE_NORMALISE))].filter(t => t && t.toUpperCase() !== "INCONNU").sort();
+
   return (
-    <main className="min-h-screen bg-white">
-      <Header favoritesCount={favorites.length} onToggleFavorites={() => setShowOnlyFavorites(!showOnlyFavorites)} showOnlyFavorites={showOnlyFavorites} />
+    <main className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col font-sans overflow-x-hidden">
       
-      <section className="bg-slate-50 py-8 md:py-16 px-4 md:px-6">
-        <div className="max-w-[1600px] mx-auto grid lg:grid-cols-2 gap-8 items-center">
-          <div className="space-y-6">
-            <div className="inline-block bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-[10px] font-black uppercase">Mode Investisseur inclus</div>
-            <h1 className="text-4xl md:text-6xl font-black text-slate-900 leading-tight tracking-tighter">Toutes les annonces immo de <span className="text-blue-700">Martinique</span>.</h1>
-            <p className="text-lg text-slate-500 font-medium">L'outil de centralisation le plus complet pour votre recherche.</p>
-            <button onClick={() => document.getElementById('listing')?.scrollIntoView({behavior:'smooth'})} className="bg-blue-700 text-white px-8 py-4 rounded-xl font-black uppercase text-[11px] tracking-widest shadow-lg shadow-blue-200">Voir les annonces</button>
+      <Header 
+        favoritesCount={favorites.length} 
+        onToggleFavorites={handleToggleOnlyFavorites} 
+        showOnlyFavorites={showOnlyFavorites} 
+      />
+
+      {/* HERO SECTION (Conservée car elle est unique) */}
+      <section className="bg-gradient-to-br from-blue-700 via-blue-600 to-cyan-500 text-white py-12 md:py-16 px-6 print:hidden">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12">
+          <div className="flex-1 text-center md:text-left">
+            <h1 className="text-3xl md:text-6xl font-black mb-4 leading-[1.1]">Les annonces immo de Martinique, enfin réunies au même endroit.</h1>
+            <p className="text-base md:text-xl opacity-95 mb-8 font-medium max-w-2xl">AchatImmoMartinique est un outil indépendant qui centralise les annonces publiées par les agences immobilières de l’île afin de vous offrir une vision claire, globale et actualisée des biens disponibles en Martinique.</p>
+            <div className="flex flex-wrap justify-center md:justify-start gap-4">
+              <a href="#listing" className="bg-white text-blue-700 px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-105 transition-all">Voir les annonces</a>
+              <button onClick={fetchAnnonces} className="bg-blue-900/40 backdrop-blur-md border border-white/20 px-6 py-4 rounded-2xl font-bold hover:bg-blue-800/50 transition-all text-xs uppercase tracking-widest">🔄 Actualiser</button>
+            </div>
           </div>
-          <div className="hidden lg:block h-[400px]">{animationData && <Lottie animationData={animationData} className="h-full w-full" />}</div>
+          <div className="w-full max-w-[200px] md:max-w-md">
+            {animationData && <Lottie animationData={animationData} loop className="drop-shadow-2xl" />}
+          </div>
         </div>
       </section>
 
-      <section id="listing" className="max-w-[1600px] mx-auto px-4 md:px-6 -mt-10 relative z-10">
-        <div className="bg-white p-4 md:p-8 rounded-2xl shadow-2xl border border-slate-100">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            <FilterBox label="Commune" onChange={setFilterCommune}>
-              <option value="">Toutes</option>
-              {Array.from(new Set(annonces.map(a => a.COMMUNE_NORMALISEE))).filter(Boolean).sort().map(c => <option key={c} value={c}>{c}</option>)}
+      {/* FILTRES & ALERTE EMAIL (Conservés ici pour la simplicité) */}
+      <section id="listing" className="max-w-[1600px] mx-auto px-4 md:px-6 w-full pt-8 print:hidden">
+        <div className="bg-white p-5 md:p-10 rounded-[2rem] md:rounded-[2.5rem] shadow-xl border border-slate-100 mb-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 items-end">
+            <FilterBox label="Ville" onChange={setFilterCommune}>
+              <option value="">Martinique</option>
+              {communesDispo.map(c => <option key={c} value={c}>{c}</option>)}
             </FilterBox>
             <FilterBox label="Type" onChange={setFilterType}>
               <option value="">Tous</option>
-              {Array.from(new Set(annonces.map(a => a.TYPE_NORMALISE))).filter(Boolean).map(t => <option key={t} value={t}>{t}</option>)}
+              {typesDispo.map(t => <option key={t} value={t}>{t}</option>)}
             </FilterBox>
-            <FilterBox label="Prix Min" onChange={setFilterPrixMin}>
-              <option value="">0 €</option>
-              {[100000, 200000, 300000].map(p => <option key={p} value={p}>{p.toLocaleString()} €</option>)}
+            <FilterBox label="Pièces" onChange={setFilterPieces}>
+              <option value="">Toutes</option>
+              {[1, 2, 3, 4, 5].map(n => <option key={n} value={n.toString()}>{n === 5 ? '5+' : n}</option>)}
             </FilterBox>
-            <FilterBox label="Prix Max" onChange={setFilterPrixMax}>
-              <option value="">Illimité</option>
-              {[300000, 500000, 750000, 1000000].map(p => <option key={p} value={p}>{p.toLocaleString()} €</option>)}
+            <FilterBox label="Surface" onChange={setFilterSurface}>
+              <option value="">Toutes</option>
+              {[50, 70, 100, 150, 200].map(s => <option key={s} value={s.toString()}>{s} m² +</option>)}
             </FilterBox>
-            <button onClick={() => {setFilterCommune(""); setFilterType("");}} className="self-end bg-slate-100 text-slate-600 font-black uppercase text-[10px] py-4 rounded-xl hover:bg-slate-200 transition-all">Reset</button>
+            <FilterBox label="Min €" onChange={setFilterPrixMin}>
+              <option value="">Pas de min</option>
+              {[30000, 50000, 100000, 150000, 200000, 300000, 500000].map(p => <option key={p} value={p.toString()}>{p.toLocaleString()} €</option>)}
+            </FilterBox>
+            <FilterBox label="Max €" onChange={setFilterPrixMax}>
+              <option value="">Pas de max</option>
+              {[100000, 200000, 300000, 400000, 500000, 1000000].map(p => <option key={p} value={p.toString()}>{p.toLocaleString()} €</option>)}
+            </FilterBox>
           </div>
         </div>
 
-        <div className="flex justify-between items-center mt-12 mb-8 px-2">
-          <div className="text-sm font-bold text-slate-800 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">{filteredAnnonces.length} résultats</div>
-          <button onClick={() => setInvestorMode(!investorMode)} className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${investorMode ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-white border-slate-200 text-slate-600'}`}>🚀 Mode Investisseur</button>
-        </div>
+        {/* COMPOSANT ALERTE EMAIL PREMIUM */}
+        <EmailAlert 
+          currentCommune={filterCommune}
+          currentType={filterType}
+          currentPrixMax={filterPrixMax}
+          onAlertSubmit={handleAlertSubmit}
+        />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 md:gap-6 mb-16">
-          {loading ? <>{[...Array(10)].map((_, i) => <AnnonceSkeleton key={i} />)}</> : 
-            filteredAnnonces.slice(0, 100).map((a, i) => (
-              <AnnonceCard key={i} annonce={a} isFav={favorites.includes(a.LIEN)} onToggleFavorite={toggleFavorite} note={notes[a.LIEN] || ""} onUpdateNote={(id, n) => {const nts={...notes, [id]:n}; setNotes(nts); localStorage.setItem("notes", JSON.stringify(nts));}} investorMode={investorMode} onSimulateLoan={sel => {setSelectedAnnonce(sel); setApport(Math.round(parseInt(sel.PRIX_NORMALISE)*0.1));}} onCalculateInvest={setInvestAnnonce} ecartData={{prixM2: parseInt(a.PRIX_NORMALISE)/parseInt(a.SURFACE), ecart: ((parseInt(a.PRIX_NORMALISE)/parseInt(a.SURFACE)-3500)/3500)*100}} />
-            ))
-          }
-        </div>
-        <EmailAlert /><AboutSection />
+        {/* BARRE D'INFOS HAUT DE GRILLE */}
+<div className="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+  {/* COMPTEUR D'ANNONCES AVEC DIODE LIVE */}
+  <div className="flex items-center gap-3 bg-white px-5 py-2.5 rounded-2xl border border-slate-100 shadow-sm">
+    <div className="relative flex h-3 w-3">
+      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+      <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+    </div>
+    <p className="text-[11px] font-black uppercase tracking-wider text-slate-600">
+      <span className="text-blue-700">{filteredData.length}</span> annonces consultables actuellement
+    </p>
+  </div>
+
+  {/* BOUTON MODE INVESTISSEUR */}
+  <button 
+    onClick={() => setInvestorMode(!investorMode)} 
+    className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl border-2 transition-all shadow-sm ${
+      investorMode 
+        ? 'border-indigo-600 bg-indigo-50 text-indigo-700' 
+        : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'
+    }`}
+  >
+    <span className="text-base">{investorMode ? '📈' : '🏠'}</span>
+    <span className="text-[10px] font-black uppercase tracking-widest">
+      {investorMode ? 'Mode Investisseur Actif' : 'Passer en Mode Investisseur'}
+    </span>
+  </button>
+</div>
+
+        {/* GRILLE ANNONCES */}
+<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-16">
+  {loading ? (
+    // On affiche 10 squelettes pendant le chargement
+    <>
+      {[...Array(10)].map((_, i) => (
+        <AnnonceSkeleton key={i} />
+      ))}
+    </>
+  ) : (
+    paginatedData.map((annonce, index) => (
+      <AnnonceCard 
+        key={index}
+        annonce={annonce}
+        isFav={favorites.includes(annonce.LIEN)}
+        onToggleFavorite={toggleFavorite}
+        note={notes[annonce.LIEN] || ""}
+        onUpdateNote={updateNote}
+        investorMode={investorMode}
+        onSimulateLoan={(a) => { setSelectedAnnonce(a); setApport(Math.round(parseInt(a.PRIX_NORMALISE) * 0.1)); }}
+        onCalculateInvest={(a) => setInvestAnnonce(a)}
+        ecartData={getEcartPrixM2(annonce)}
+      />
+    ))
+  )}
+</div>
+
+        {/* PAGINATION */}
+        {!loading && totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4 mb-20">
+            <button onClick={() => {setCurrentPage(p => Math.max(1, p - 1)); window.scrollTo({top: 800, behavior: 'smooth'})}} disabled={currentPage === 1} className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-100 disabled:opacity-20 hover:bg-slate-50 transition-all">←</button>
+            <span className="font-black text-slate-600 bg-white px-8 py-3 rounded-2xl shadow-sm border border-slate-50 text-sm">{currentPage} / {totalPages}</span>
+            <button onClick={() => {setCurrentPage(p => Math.min(totalPages, p + 1)); window.scrollTo({top: 800, behavior: 'smooth'})}} disabled={currentPage === totalPages} className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-slate-100 disabled:opacity-20 hover:bg-slate-50 transition-all">→</button>
+          </div>
+        )}
       </section>
-      <Footer />
 
-      {selectedAnnonce && simulation && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl">
-            <h3 className="text-xl font-black mb-4 uppercase">Estimer mon crédit</h3>
-            <input type="number" value={apport} onChange={e => setApport(parseInt(e.target.value))} className="w-full bg-slate-50 border p-4 rounded-xl mb-4 font-bold outline-none" />
-            <div className="bg-blue-50 p-5 rounded-2xl mb-6 text-center">
-              <p className="text-4xl font-black text-blue-700">{simulation.mensualite} € <span className="text-sm opacity-50 font-bold">/mois</span></p>
+{/* SECTION À PROPOS / MÉTHODOLOGIE */}
+      <AboutSection />
+      
+      <Footer onToggleFavorites={handleToggleOnlyFavorites} />
+
+      {/* MODALES DE CALCULS (Conservées ici car elles gèrent des états locaux complexes) */}
+      {selectedAnnonce && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-md" onClick={() => setSelectedAnnonce(null)}></div>
+          <div className="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden p-10">
+            <h2 className="text-2xl font-black mb-6">📊 Simulation Prêt</h2>
+            <p className="text-4xl font-black text-blue-600 mb-8">{Math.round(mensualite).toLocaleString('fr-FR')} € / mois</p>
+            <div className="space-y-6">
+              <div>
+                <label className="text-[9px] font-black uppercase text-slate-400 block mb-2">Apport : {apport.toLocaleString()} €</label>
+                <input type="range" min="0" max={parseInt(selectedAnnonce.PRIX_NORMALISE)} step="5000" value={apport} onChange={(e) => setApport(parseInt(e.target.value))} className="w-full h-2 bg-slate-100 rounded-lg appearance-none accent-blue-600" />
+              </div>
+              <button onClick={() => setSelectedAnnonce(null)} className="w-full bg-slate-900 text-white py-4 rounded-xl font-black uppercase text-[10px]">Fermer</button>
             </div>
-            <button onClick={() => setSelectedAnnonce(null)} className="w-full bg-slate-900 text-white py-4 rounded-xl font-black uppercase text-[10px]">Fermer</button>
           </div>
         </div>
       )}
 
       {investAnnonce && (
-        <div className="fixed inset-0 bg-indigo-900/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-2xl">
-            <h3 className="text-xl font-black mb-6 uppercase text-center">Analyse Investisseur</h3>
-            <div className="bg-indigo-50 p-6 rounded-2xl flex justify-around mb-8 text-center">
-              <div><p className="text-2xl font-black text-indigo-600">{(( (parseInt(investAnnonce.SURFACE)*15)*12 ) / parseInt(investAnnonce.PRIX_NORMALISE)*100).toFixed(2)} %</p><p className="text-[9px] font-bold uppercase opacity-50">Rendement Brut</p></div>
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-indigo-900/70 backdrop-blur-md" onClick={() => setInvestAnnonce(null)}></div>
+          <div className="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden p-10">
+            <h2 className="text-2xl font-black mb-6">📈 Rentabilité</h2>
+            <div className="grid grid-cols-2 gap-4 mb-8">
+              <div><p className="text-2xl font-black">{rendementData.brut.toFixed(2)} %</p><p className="text-[9px] font-bold uppercase opacity-50">Brut</p></div>
+              <div><p className="text-2xl font-black text-indigo-600">{rendementData.net.toFixed(2)} %</p><p className="text-[9px] font-bold uppercase opacity-50">Net</p></div>
             </div>
             <button onClick={() => setInvestAnnonce(null)} className="w-full bg-indigo-600 text-white py-4 rounded-xl font-black uppercase text-[10px]">Fermer</button>
           </div>
         </div>
       )}
+      {/* ... tes autres modales ... */}
+      
       <StickyFilter />
     </main>
   );
 }
 
+// Fonction utilitaire FilterBox (Conservée en bas de page pour la lisibilité)
 function FilterBox({ label, children, onChange }: { label: string; children: React.ReactNode; onChange: (val: string) => void }) {
   return (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-[10px] font-black uppercase text-slate-400 ml-1">{label}</label>
+    <div className="flex flex-col gap-3">
+      <label className="text-[11px] font-black uppercase tracking-[0.1em] text-slate-400 ml-1">{label}</label>
       <div className="relative group">
-        <select onChange={e => onChange(e.target.value)} className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3.5 text-sm font-bold text-slate-800 outline-none appearance-none shadow-sm cursor-pointer">{children}</select>
-        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none opacity-30">
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"></path></svg>
+        <select onChange={(e) => onChange(e.target.value)} className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-5 text-sm font-bold text-slate-800 outline-none appearance-none cursor-pointer hover:bg-slate-100 transition-all shadow-sm">
+          {children}
+        </select>
+        <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none opacity-30">
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7"></path></svg>
         </div>
       </div>
     </div>
