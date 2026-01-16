@@ -181,16 +181,16 @@ const filteredAnnonces = useMemo(() => {
 
       return matchCommune && matchType && matchPieces && matchPrixMin && matchPrixMax && matchSurface;
     });
-    // J'ai supprimé "sortBy" de la ligne ci-dessous :
   }, [annonces, filterCommune, filterType, filterPieces, filterSurface, filterPrixMin, filterPrixMax]);
   
-  const paginatedData = filteredAnnonces.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const totalPages = Math.ceil(filteredAnnonces.length / itemsPerPage);
 
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const paginatedData = useMemo(() => {
+    return filteredAnnonces.slice(
+      (currentPage - 1) * itemsPerPage,
+      currentPage * itemsPerPage
+    );
+  }, [filteredAnnonces, currentPage]);
 
   const mensualite = useMemo(() => {
     if (!selectedAnnonce) return 0;
@@ -308,35 +308,33 @@ const filteredAnnonces = useMemo(() => {
 </div>
 
         {/* GRILLE ANNONCES */}
-<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-16">
-  {loading ? (
-    // On affiche 10 squelettes pendant le chargement
-    <>
-      {[...Array(10)].map((_, i) => (
-        <AnnonceSkeleton key={i} />
-      ))}
-    </>
-  ) : (
-    /* On utilise ici les données triées et paginées */
-    paginatedData.map((annonce, index) => (
-      <AnnonceCard key={index} annonce={annonce} />
-    ))
-  )}
-      <AnnonceCard 
-        key={index}
-        annonce={annonce}
-        isFav={favorites.includes(annonce.LIEN)}
-        onToggleFavorite={toggleFavorite}
-        note={notes[annonce.LIEN] || ""}
-        onUpdateNote={updateNote}
-        investorMode={investorMode}
-        onSimulateLoan={(a) => { setSelectedAnnonce(a); setApport(Math.round(parseInt(a.PRIX_NORMALISE) * 0.1)); }}
-        onCalculateInvest={(a) => setInvestAnnonce(a)}
-        ecartData={getEcartPrixM2(annonce)}
-      />
-    ))
-  )}
-</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-16">
+          {loading ? (
+            <>
+              {[...Array(10)].map((_, i) => (
+                <AnnonceSkeleton key={i} />
+              ))}
+            </>
+          ) : (
+            paginatedData.map((annonce, index) => (
+              <AnnonceCard 
+                key={annonce.LIEN || index}
+                annonce={annonce}
+                isFav={favorites.includes(annonce.LIEN)}
+                onToggleFavorite={toggleFavorite}
+                note={notes[annonce.LIEN] || ""}
+                onUpdateNote={updateNote}
+                investorMode={investorMode}
+                onSimulateLoan={(a) => { 
+                  setSelectedAnnonce(a); 
+                  setApport(Math.round(parseInt(a.PRIX_NORMALISE) * 0.1)); 
+                }}
+                onCalculateInvest={(a) => setInvestAnnonce(a)}
+                ecartData={getEcartPrixM2(annonce)}
+              />
+            ))
+          )}
+        </div>
 
         {/* PAGINATION */}
         {!loading && totalPages > 1 && (
