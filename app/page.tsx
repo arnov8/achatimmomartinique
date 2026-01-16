@@ -10,6 +10,7 @@ import Footer from "./components/layout/Footer";
 import AnnonceCard from "./components/home/AnnonceCard";
 import AboutSection from "./components/layout/AboutSection";
 import EmailAlert from "./components/home/EmailAlert";
+import StickyFilter from "./components/home/StickyFilter";
 
 type AnnonceRaw = {
   TITRE: string;
@@ -367,6 +368,12 @@ export default function Home() {
           </div>
         </div>
       )}
+      {/* ... tes autres modales ... */}
+      
+      <StickyFilter />
+    </main>
+  );
+}
     </main>
   );
 }
