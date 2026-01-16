@@ -8,7 +8,8 @@ import Papa from "papaparse";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import AnnonceCard from "./components/home/AnnonceCard";
-import AboutSection from "./components/layout/AboutSection"; // <-- AJOUTEZ CECI
+import AboutSection from "./components/layout/AboutSection";
+import EmailAlert from "./components/home/EmailAlert";
 
 type AnnonceRaw = {
   TITRE: string;
@@ -103,21 +104,17 @@ export default function Home() {
     document.getElementById('listing')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const handleAlertSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setAlertStatus("⏳ Création...");
+  const handleAlertSubmit = async (email: string, criteria: any) => {
     const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSec-DdyTrrQCu4zXyvdR4GBOy0bpIfLk_3003p0AO-U9KmF7Q/formResponse";
     const formData = new FormData();
     formData.append("entry.1097581547", email); 
-    formData.append("entry.1184240355", filterType || "Tous les types");
-    formData.append("entry.1319234674", filterCommune || "Toute la Martinique");
-    formData.append("entry.624227201", filterPrixMax || "999999999");
-    try {
-      await fetch(FORM_URL, { method: "POST", mode: "no-cors", body: formData });
-      setAlertStatus("✅ Alerte activée !");
-      setEmail("");
-      setTimeout(() => setAlertStatus(""), 5000);
-    } catch (error) { setAlertStatus("❌ Erreur"); }
+    formData.append("entry.1184240355", criteria.type);
+    formData.append("entry.1319234674", criteria.commune);
+    formData.append("entry.624227201", criteria.prixMax);
+    // On ajoute les précisions supplémentaires dans un champ note si nécessaire
+    // formData.append("entry.VOTRE_ID_NOTE", criteria.extra); 
+
+    await fetch(FORM_URL, { method: "POST", mode: "no-cors", body: formData });
   };
 
   const prixMoyensParCommune = useMemo(() => {
