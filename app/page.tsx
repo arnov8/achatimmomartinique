@@ -52,7 +52,6 @@ export default function Home() {
   const [duree, setDuree] = useState(20);
   const [taux, setTaux] = useState(3.8);
   const [investAnnonce, setInvestAnnonce] = useState<AnnonceRaw | null>(null);
-  const [sortBy, setSortBy] = useState("recent"); // "recent", "prix-asc", or "prix-desc"
   const [loyerEstime, setLoyerEstime] = useState(800);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
@@ -342,7 +341,7 @@ export default function Home() {
     </>
   ) : (
     /* On utilise ici les données triées et paginées */
-    filteredAndSortedAnnonces.map((annonce, index) => (
+    paginatedData.map((annonce, index) => (
       <AnnonceCard key={index} annonce={annonce} />
     ))
   )}
