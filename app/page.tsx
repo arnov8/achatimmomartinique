@@ -170,6 +170,7 @@ export default function Home() {
 
   // On calcule la liste qui est à la fois FILTRÉE et TRIÉE
   const filteredAndSortedAnnonces = useMemo(() => {
+    // 1. Filtrage
     let result = annonces.filter((annonce) => {
       const matchCommune = filterCommune === "" || annonce.COMMUNE_NORMALISEE === filterCommune;
       const matchType = filterType === "" || annonce.TYPE_NORMALISE === filterType;
@@ -177,20 +178,15 @@ export default function Home() {
       return matchCommune && matchType && matchPieces;
     });
 
-    // On applique le tri sur le résultat du filtre
+    // 2. Tri
     return [...result].sort((a, b) => {
-      if (sortBy === "prix-asc") {
-        return parseFloat(a.PRIX_NORMALISE) - parseFloat(b.PRIX_NORMALISE);
-      } else if (sortBy === "prix-desc") {
-        return parseFloat(b.PRIX_NORMALISE) - parseFloat(a.PRIX_NORMALISE);
-      } else {
-        // Par défaut : le plus récent en premier
-        return new Date(b["DATE ET HEURE"]).getTime() - new Date(a["DATE ET HEURE"]).getTime();
-      }
+      if (sortBy === "prix-asc") return parseFloat(a.PRIX_NORMALISE) - parseFloat(b.PRIX_NORMALISE);
+      if (sortBy === "prix-desc") return parseFloat(b.PRIX_NORMALISE) - parseFloat(a.PRIX_NORMALISE);
+      return new Date(b["DATE ET HEURE"]).getTime() - new Date(a["DATE ET HEURE"]).getTime();
     });
   }, [annonces, filterCommune, filterType, filterPieces, sortBy]);
 
-  // IMPORTANT : On définit les données à afficher à partir de cette liste triée
+  // 3. Pagination (on prend les 20 premiers de la liste FILTRÉE et TRIÉE)
   const paginatedData = filteredAndSortedAnnonces.slice(0, 20);
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -272,7 +268,6 @@ export default function Home() {
               <option value="">Pas de max</option>
               {[100000, 200000, 300000, 400000, 500000, 1000000].map(p => <option key={p} value={p.toString()}>{p.toLocaleString()} €</option>)}
             </FilterBox>
-            {/* BOUTON DE TRI */}
             <FilterBox label="Trier par" onChange={setSortBy}>
               <option value="recent">Plus récent</option>
               <option value="prix-asc">Prix croissant</option>
