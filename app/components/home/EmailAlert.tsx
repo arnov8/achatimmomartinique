@@ -46,7 +46,7 @@ export default function EmailAlert({ currentCommune, currentType, currentPrixMax
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-cyan-400"></span>
             </span>
-            <span className="text-white text-[10px] font-black uppercase tracking-widest">Service VIP Gratuit</span>
+            <span className="text-white text-[10px] font-black uppercase tracking-widest">Service Puissant Gratuit</span>
           </div>
 
           <h2 className="text-3xl md:text-5xl font-black text-white leading-tight">
