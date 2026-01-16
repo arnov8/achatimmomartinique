@@ -8,6 +8,7 @@ import Papa from "papaparse";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import AnnonceCard from "./components/home/AnnonceCard";
+import AboutSection from "./components/layout/AboutSection"; // <-- AJOUTEZ CECI
 
 type AnnonceRaw = {
   TITRE: string;
@@ -318,6 +319,9 @@ export default function Home() {
         )}
       </section>
 
+{/* SECTION À PROPOS / MÉTHODOLOGIE */}
+      <AboutSection />
+      
       <Footer onToggleFavorites={handleToggleOnlyFavorites} />
 
       {/* MODALES DE CALCULS (Conservées ici car elles gèrent des états locaux complexes) */}
