@@ -272,13 +272,34 @@ export default function Home() {
           onAlertSubmit={handleAlertSubmit}
         />
 
-        {/* SWITCH MODE INVESTISSEUR */}
-        <div className="mb-4 flex justify-end">
-          <button onClick={() => setInvestorMode(!investorMode)} className={`flex items-center gap-2 px-4 py-2 rounded-xl border-2 transition-all ${investorMode ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-slate-200 bg-white text-slate-500'}`}>
-            <span className="text-lg">{investorMode ? '📈' : '🏠'}</span>
-            <span className="text-[10px] font-black uppercase tracking-widest">{investorMode ? 'Mode Investisseur Actif' : 'Passer en Mode Investisseur'}</span>
-          </button>
-        </div>
+        {/* BARRE D'INFOS HAUT DE GRILLE */}
+<div className="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+  {/* COMPTEUR D'ANNONCES AVEC DIODE LIVE */}
+  <div className="flex items-center gap-3 bg-white px-5 py-2.5 rounded-2xl border border-slate-100 shadow-sm">
+    <div className="relative flex h-3 w-3">
+      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+      <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+    </div>
+    <p className="text-[11px] font-black uppercase tracking-wider text-slate-600">
+      <span className="text-blue-700">{filteredData.length}</span> annonces consultables actuellement
+    </p>
+  </div>
+
+  {/* BOUTON MODE INVESTISSEUR */}
+  <button 
+    onClick={() => setInvestorMode(!investorMode)} 
+    className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl border-2 transition-all shadow-sm ${
+      investorMode 
+        ? 'border-indigo-600 bg-indigo-50 text-indigo-700' 
+        : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'
+    }`}
+  >
+    <span className="text-base">{investorMode ? '📈' : '🏠'}</span>
+    <span className="text-[10px] font-black uppercase tracking-widest">
+      {investorMode ? 'Mode Investisseur Actif' : 'Passer en Mode Investisseur'}
+    </span>
+  </button>
+</div>
 
         {/* GRILLE ANNONCES (Utilisation du nouveau composant AnnonceCard) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-16">
