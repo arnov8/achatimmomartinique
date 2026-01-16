@@ -25,7 +25,7 @@ export default function Header({ favoritesCount, onToggleFavorites, showOnlyFavo
       <div className="max-w-[1600px] mx-auto">
         <div className="flex justify-between items-center gap-2">
           
-          {/* LOGO ET TITRE - Ajout de min-w-0 pour éviter de pousser les éléments à droite */}
+          {/* LOGO ET TITRE */}
           <div 
             className="flex flex-col cursor-pointer flex-shrink-1 min-w-0" 
             onClick={() => {
@@ -41,7 +41,7 @@ export default function Header({ favoritesCount, onToggleFavorites, showOnlyFavo
             </p>
           </div>
 
-          {/* MENU DESKTOP (Largeur écran > 1024px) - RÉINTÉGRÉ ICI */}
+          {/* MENU DESKTOP */}
           <nav className="hidden lg:flex items-center gap-6">
             {menuLinks.map((link) => (
               <Link 
@@ -65,7 +65,7 @@ export default function Header({ favoritesCount, onToggleFavorites, showOnlyFavo
               ❤️ <span className="hidden sm:inline">Mes Favoris</span> ({favoritesCount})
             </button>
 
-            {/* BOUTON BURGER (Mobile uniquement) - Correction du décentrage droit */}
+            {/* BOUTON BURGER (Correction alignement droite) */}
             <button 
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="lg:hidden p-2 -mr-2 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"
@@ -84,4 +84,20 @@ export default function Header({ favoritesCount, onToggleFavorites, showOnlyFavo
 
         {/* MENU MOBILE DÉROULANT */}
         {isMenuOpen && (
-          <nav className="lg:hidden mt-4 py-4 border-t border-
+          <nav className="lg:hidden mt-4 py-4 border-t border-slate-50 flex flex-col gap-4 animate-in slide-in-from-top duration-300">
+            {menuLinks.map((link) => (
+              <Link 
+                key={link.name} 
+                href={link.href} 
+                onClick={() => setIsMenuOpen(false)}
+                className="text-xs font-black uppercase tracking-widest text-slate-600 hover:text-blue-600 px-2 py-1"
+              >
+                {link.name}
+              </Link>
+            ))}
+          </nav>
+        )}
+      </div>
+    </header>
+  );
+}
