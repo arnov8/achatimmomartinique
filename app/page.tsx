@@ -37,7 +37,6 @@ export default function Home() {
   const [filterCommune, setFilterCommune] = useState("");
   const [filterType, setFilterType] = useState("");
   const [filterPieces, setFilterPieces] = useState("");
-  const [sortBy, setSortBy] = useState("recent");
   const [filterSurface, setFilterSurface] = useState("");
   const [filterPrixMin, setFilterPrixMin] = useState("");
   const [filterPrixMax, setFilterPrixMax] = useState("");
@@ -167,16 +166,12 @@ export default function Home() {
     }
     return { ecart: 0, applicable: false };
   };
-
-  // --- BLOC LOGIQUE UNIQUE (FILTRE + TRI + PAGINATION) ---
-  const filteredAndSortedAnnonces = useMemo(() => {
-    let result = annonces.filter((annonce) => {
-      // 1. Filtres textes
+const filteredAnnonces = useMemo(() => {
+    return annonces.filter((annonce) => {
       const matchCommune = filterCommune === "" || annonce.COMMUNE_NORMALISEE === filterCommune;
       const matchType = filterType === "" || annonce.TYPE_NORMALISE === filterType;
       const matchPieces = filterPieces === "" || annonce["NOMBRE DE PIECES"] === filterPieces;
       
-      // 2. Filtres nombres (Prix et Surface)
       const prix = parseFloat(annonce.PRIX_NORMALISE) || 0;
       const surface = parseFloat(annonce.SURFACE) || 0;
       
@@ -186,22 +181,14 @@ export default function Home() {
 
       return matchCommune && matchType && matchPieces && matchPrixMin && matchPrixMax && matchSurface;
     });
+  }, [annonces, filterCommune, filterType, filterPieces, filterSurface, filterPrixMin, filterPrixMax]);
 
-    // 3. Le Tri
-    return [...result].sort((a, b) => {
-      const pA = parseFloat(a.PRIX_NORMALISE) || 0;
-      const pB = parseFloat(b.PRIX_NORMALISE) || 0;
-      if (sortBy === "prix-asc") return pA - pB;
-      if (sortBy === "prix-desc") return pB - pA;
-      return new Date(b["DATE ET HEURE"]).getTime() - new Date(a["DATE ET HEURE"]).getTime();
-    });
-  }, [annonces, filterCommune, filterType, filterPieces, filterSurface, filterPrixMin, filterPrixMax, sortBy]);
-
-  // LA LIGNE QUI DÉBLOQUE TOUT (Celle-ci remplace ton ancienne ligne 84)
-  const paginatedData = filteredAndSortedAnnonces.slice(
+  // On remet la pagination sur la liste filtrée simple
+  const paginatedData = filteredAnnonces.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
@@ -282,12 +269,7 @@ export default function Home() {
               <option value="">Pas de max</option>
               {[100000, 200000, 300000, 400000, 500000, 1000000].map(p => <option key={p} value={p.toString()}>{p.toLocaleString()} €</option>)}
             </FilterBox>
-            <FilterBox label="Trier par" onChange={setSortBy}>
-              <option value="recent">Plus récent</option>
-              <option value="prix-asc">Prix croissant</option>
-              <option value="prix-desc">Prix décroissant</option>
-            </FilterBox>
-        
+      
         {/* COMPOSANT ALERTE EMAIL PREMIUM */}
         <EmailAlert 
           currentCommune={filterCommune}
