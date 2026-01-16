@@ -168,35 +168,30 @@ export default function Home() {
     return { ecart: 0, applicable: false };
   };
 
-  const filteredData = useMemo(() => {
-    const filtered = annonces.filter(a => {
-      if (showOnlyFavorites && !favorites.includes(a.LIEN)) return false;
-      const p = parseInt(a.PRIX_NORMALISE);
-      const matchCommune = !filterCommune || a.COMMUNE_NORMALISEE === filterCommune;
-      const matchType = !filterType || a.TYPE_NORMALISE === filterType;
-      const piecesVal = parseInt(a["NOMBRE DE PIECES"]);
-      const matchPieces = !filterPieces || (filterPieces === "5" ? piecesVal >= 5 : piecesVal === parseInt(filterPieces));
-      const matchSurface = !filterSurface || parseInt(a.SURFACE) >= parseInt(filterSurface);
-      const matchPrixMin = !filterPrixMin || p >= parseInt(filterPrixMin);
-      const matchPrixMax = !filterPrixMax || p <= parseInt(filterPrixMax);
-      return matchCommune && matchType && matchPieces && matchSurface && matchPrixMin && matchPrixMax;
+  // On calcule la liste qui est à la fois FILTRÉE et TRIÉE
+  const filteredAndSortedAnnonces = useMemo(() => {
+    let result = annonces.filter((annonce) => {
+      const matchCommune = filterCommune === "" || annonce.COMMUNE_NORMALISEE === filterCommune;
+      const matchType = filterType === "" || annonce.TYPE_NORMALISE === filterType;
+      const matchPieces = filterPieces === "" || annonce["NOMBRE DE PIECES"] === filterPieces;
+      return matchCommune && matchType && matchPieces;
     });
 
-    // --- ICI ON REMPLACE LE TRI FIXE PAR LE TRI DYNAMIQUE ---
-    return [...filtered].sort((a, b) => {
+    // On applique le tri sur le résultat du filtre
+    return [...result].sort((a, b) => {
       if (sortBy === "prix-asc") {
-        return parseInt(a.PRIX_NORMALISE) - parseInt(b.PRIX_NORMALISE);
+        return parseFloat(a.PRIX_NORMALISE) - parseFloat(b.PRIX_NORMALISE);
       } else if (sortBy === "prix-desc") {
-        return parseInt(b.PRIX_NORMALISE) - parseInt(a.PRIX_NORMALISE);
-      } else if (sortBy === "recent") {
+        return parseFloat(b.PRIX_NORMALISE) - parseFloat(a.PRIX_NORMALISE);
+      } else {
+        // Par défaut : le plus récent en premier
         return new Date(b["DATE ET HEURE"]).getTime() - new Date(a["DATE ET HEURE"]).getTime();
       }
-      return 0;
     });
-    // -------------------------------------------------------
+  }, [annonces, filterCommune, filterType, filterPieces, sortBy]);
 
-  }, [annonces, filterCommune, filterType, filterPieces, filterSurface, filterPrixMin, filterPrixMax, favorites, showOnlyFavorites, sortBy]); 
-  // N'oublie pas de rajouter 'sortBy' ici juste au dessus ↑
+  // IMPORTANT : On définit les données à afficher à partir de cette liste triée
+  const paginatedData = filteredAndSortedAnnonces.slice(0, 20);
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
