@@ -169,8 +169,8 @@ export default function Home() {
   };
 
   // On calcule la liste qui est à la fois FILTRÉE et TRIÉE
+  // ON FILTRE ET ON TRIE D'UN COUP
   const filteredAndSortedAnnonces = useMemo(() => {
-    // 1. Filtrage
     let result = annonces.filter((annonce) => {
       const matchCommune = filterCommune === "" || annonce.COMMUNE_NORMALISEE === filterCommune;
       const matchType = filterType === "" || annonce.TYPE_NORMALISE === filterType;
@@ -178,15 +178,17 @@ export default function Home() {
       return matchCommune && matchType && matchPieces;
     });
 
-    // 2. Tri
     return [...result].sort((a, b) => {
-      if (sortBy === "prix-asc") return parseFloat(a.PRIX_NORMALISE) - parseFloat(b.PRIX_NORMALISE);
-      if (sortBy === "prix-desc") return parseFloat(b.PRIX_NORMALISE) - parseFloat(a.PRIX_NORMALISE);
+      const prixA = parseFloat(a.PRIX_NORMALISE) || 0;
+      const prixB = parseFloat(b.PRIX_NORMALISE) || 0;
+      if (sortBy === "prix-asc") return prixA - prixB;
+      if (sortBy === "prix-desc") return prixB - prixA;
+      // Par défaut : Tri par date (le plus récent en haut)
       return new Date(b["DATE ET HEURE"]).getTime() - new Date(a["DATE ET HEURE"]).getTime();
     });
   }, [annonces, filterCommune, filterType, filterPieces, sortBy]);
 
-  // 3. Pagination (on prend les 20 premiers de la liste FILTRÉE et TRIÉE)
+  // ON DÉFINIT LA PAGINATION SUR LA LISTE TRIÉE (ET PAS SUR 'annonces')
   const paginatedData = filteredAndSortedAnnonces.slice(0, 20);
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
