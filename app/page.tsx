@@ -374,9 +374,6 @@ export default function Home() {
     </main>
   );
 }
-    </main>
-  );
-}
 
 // Fonction utilitaire FilterBox (Conservée en bas de page pour la lisibilité)
 function FilterBox({ label, children, onChange }: { label: string; children: React.ReactNode; onChange: (val: string) => void }) {
