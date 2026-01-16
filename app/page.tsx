@@ -11,6 +11,7 @@ import AnnonceCard from "./components/home/AnnonceCard";
 import AboutSection from "./components/layout/AboutSection";
 import EmailAlert from "./components/home/EmailAlert";
 import StickyFilter from "./components/home/StickyFilter";
+import AnnonceSkeleton from "./components/home/AnnonceSkeleton";
 
 type AnnonceRaw = {
   TITRE: string;
