@@ -54,6 +54,7 @@ export default function Home() {
   const [loyerEstime, setLoyerEstime] = useState(800);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
+  const [sortBy, setSortBy] = useState("recent"); // "recent", "prix-asc", or "prix-desc"
 
   const SHEET_URL = process.env.NEXT_PUBLIC_SHEET_URL || "";
 
