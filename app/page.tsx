@@ -287,6 +287,13 @@ export default function Home() {
           </div>
         </div>
 
+        {/* ÉTAPE 3 : AJOUT DU SÉLECTEUR DE TRI */}
+            <FilterBox label="Trier par" onChange={setSortBy}>
+              <option value="recent">Plus récent</option>
+              <option value="prix-asc">Prix : Moins cher</option>
+              <option value="prix-desc">Prix : Plus cher</option>
+            </FilterBox>
+        
         {/* COMPOSANT ALERTE EMAIL PREMIUM */}
         <EmailAlert 
           currentCommune={filterCommune}
@@ -334,7 +341,11 @@ export default function Home() {
       ))}
     </>
   ) : (
-    paginatedData.map((annonce, index) => (
+    /* On utilise ici les données triées et paginées */
+    filteredAndSortedAnnonces.map((annonce, index) => (
+      <AnnonceCard key={index} annonce={annonce} />
+    ))
+  )}
       <AnnonceCard 
         key={index}
         annonce={annonce}
