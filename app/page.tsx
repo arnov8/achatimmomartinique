@@ -51,10 +51,10 @@ export default function Home() {
   const [duree, setDuree] = useState(20);
   const [taux, setTaux] = useState(3.8);
   const [investAnnonce, setInvestAnnonce] = useState<AnnonceRaw | null>(null);
+  const [sortBy, setSortBy] = useState("recent"); // "recent", "prix-asc", or "prix-desc"
   const [loyerEstime, setLoyerEstime] = useState(800);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
-  const [sortBy, setSortBy] = useState("recent"); // "recent", "prix-asc", or "prix-desc"
 
   const SHEET_URL = process.env.NEXT_PUBLIC_SHEET_URL || "";
 
@@ -181,9 +181,22 @@ export default function Home() {
       const matchPrixMax = !filterPrixMax || p <= parseInt(filterPrixMax);
       return matchCommune && matchType && matchPieces && matchSurface && matchPrixMin && matchPrixMax;
     });
-    return filtered.sort((a, b) => parseInt(a.PRIX_NORMALISE) - parseInt(b.PRIX_NORMALISE));
-  }, [annonces, filterCommune, filterType, filterPieces, filterSurface, filterPrixMin, filterPrixMax, favorites, showOnlyFavorites]);
 
+    // --- ICI ON REMPLACE LE TRI FIXE PAR LE TRI DYNAMIQUE ---
+    return [...filtered].sort((a, b) => {
+      if (sortBy === "prix-asc") {
+        return parseInt(a.PRIX_NORMALISE) - parseInt(b.PRIX_NORMALISE);
+      } else if (sortBy === "prix-desc") {
+        return parseInt(b.PRIX_NORMALISE) - parseInt(a.PRIX_NORMALISE);
+      } else if (sortBy === "recent") {
+        return new Date(b["DATE ET HEURE"]).getTime() - new Date(a["DATE ET HEURE"]).getTime();
+      }
+      return 0;
+    });
+    // -------------------------------------------------------
+
+  }, [annonces, filterCommune, filterType, filterPieces, filterSurface, filterPrixMin, filterPrixMax, favorites, showOnlyFavorites, sortBy]); 
+  // N'oublie pas de rajouter 'sortBy' ici juste au dessus ↑
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
