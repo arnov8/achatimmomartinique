@@ -287,7 +287,7 @@ const filteredAnnonces = useMemo(() => {
       <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
     </div>
     <p className="text-[11px] font-black uppercase tracking-wider text-slate-600">
-      <span className="text-blue-700">{filteredData.length}</span> annonces consultables actuellement
+      <span className="text-blue-700">{filteredAnnonces.length}</span> annonces consultables actuellement
     </p>
   </div>
 
