@@ -303,25 +303,32 @@ export default function Home() {
   </button>
 </div>
 
-        {/* GRILLE ANNONCES (Utilisation du nouveau composant AnnonceCard) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-16">
-          {loading ? (
-            <div className="col-span-full text-center py-20 text-slate-300 font-bold uppercase animate-pulse">Synchronisation...</div>
-          ) : paginatedData.map((annonce, index) => (
-            <AnnonceCard 
-              key={index}
-              annonce={annonce}
-              isFav={favorites.includes(annonce.LIEN)}
-              onToggleFavorite={toggleFavorite}
-              note={notes[annonce.LIEN] || ""}
-              onUpdateNote={updateNote}
-              investorMode={investorMode}
-              onSimulateLoan={(a) => { setSelectedAnnonce(a); setApport(Math.round(parseInt(a.PRIX_NORMALISE) * 0.1)); }}
-              onCalculateInvest={(a) => setInvestAnnonce(a)}
-              ecartData={getEcartPrixM2(annonce)}
-            />
-          ))}
-        </div>
+        {/* GRILLE ANNONCES */}
+<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-16">
+  {loading ? (
+    // On affiche 10 squelettes pendant le chargement
+    <>
+      {[...Array(10)].map((_, i) => (
+        <AnnonceSkeleton key={i} />
+      ))}
+    </>
+  ) : (
+    paginatedData.map((annonce, index) => (
+      <AnnonceCard 
+        key={index}
+        annonce={annonce}
+        isFav={favorites.includes(annonce.LIEN)}
+        onToggleFavorite={toggleFavorite}
+        note={notes[annonce.LIEN] || ""}
+        onUpdateNote={updateNote}
+        investorMode={investorMode}
+        onSimulateLoan={(a) => { setSelectedAnnonce(a); setApport(Math.round(parseInt(a.PRIX_NORMALISE) * 0.1)); }}
+        onCalculateInvest={(a) => setInvestAnnonce(a)}
+        ecartData={getEcartPrixM2(annonce)}
+      />
+    ))
+  )}
+</div>
 
         {/* PAGINATION */}
         {!loading && totalPages > 1 && (
