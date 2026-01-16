@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Lottie from "lottie-react";
 import Papa from "papaparse";
 
-// CORRECTION DES CHEMINS ICI :
+// COMPOSANTS
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import AnnonceCard from "./components/home/AnnonceCard";
@@ -30,7 +30,6 @@ type AnnonceRaw = {
 };
 
 export default function Home() {
-  // --- TOUTE VOTRE LOGIQUE ACTUELLE (CONSERVÉE) ---
   const [annonces, setAnnonces] = useState<AnnonceRaw[]>([]);
   const [loading, setLoading] = useState(true);
   const [animationData, setAnimationData] = useState(null);
@@ -44,8 +43,6 @@ export default function Home() {
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [showOnlyFavorites, setShowOnlyFavorites] = useState(false);
   const [investorMode, setInvestorMode] = useState(false);
-  const [email, setEmail] = useState("");
-  const [alertStatus, setAlertStatus] = useState("");
   const [selectedAnnonce, setSelectedAnnonce] = useState<AnnonceRaw | null>(null);
   const [apport, setApport] = useState(0);
   const [duree, setDuree] = useState(20);
@@ -57,6 +54,7 @@ export default function Home() {
 
   const SHEET_URL = process.env.NEXT_PUBLIC_SHEET_URL || "";
 
+  // PERSISTENCE LOCALSTORAGE
   useEffect(() => {
     const savedFavs = localStorage.getItem("mes-favoris-immo");
     if (savedFavs) { setFavorites(JSON.parse(savedFavs)); }
@@ -67,6 +65,7 @@ export default function Home() {
   useEffect(() => { localStorage.setItem("mes-favoris-immo", JSON.stringify(favorites)); }, [favorites]);
   useEffect(() => { localStorage.setItem("mes-notes-immo", JSON.stringify(notes)); }, [notes]);
 
+  // CHARGEMENT LOTTIE
   useEffect(() => {
     fetch("/animations/search-house.json")
       .then((res) => res.json())
@@ -74,6 +73,7 @@ export default function Home() {
       .catch((err) => console.error("Erreur Lottie:", err));
   }, []);
 
+  // FETCH DATA
   const fetchAnnonces = () => {
     setLoading(true);
     Papa.parse(SHEET_URL, {
@@ -92,6 +92,7 @@ export default function Home() {
 
   useEffect(() => { fetchAnnonces(); }, []);
 
+  // HANDLERS
   const toggleFavorite = (lien: string) => {
     setFavorites(prev => prev.includes(lien) ? prev.filter(id => id !== lien) : [...prev, lien]);
   };
@@ -113,12 +114,10 @@ export default function Home() {
     formData.append("entry.1184240355", criteria.type);
     formData.append("entry.1319234674", criteria.commune);
     formData.append("entry.624227201", criteria.prixMax);
-    // On ajoute les précisions supplémentaires dans un champ note si nécessaire
-    // formData.append("entry.VOTRE_ID_NOTE", criteria.extra); 
-
     await fetch(FORM_URL, { method: "POST", mode: "no-cors", body: formData });
   };
 
+  // LOGIQUE CALCULS PRIX M2
   const prixMoyensParCommune = useMemo(() => {
     const stats: Record<string, { habitableTotal: number; habitableCount: number; terrainTotal: number; terrainCount: number; }> = {};
     annonces.forEach(a => {
@@ -166,32 +165,33 @@ export default function Home() {
     }
     return { ecart: 0, applicable: false };
   };
-const filteredAnnonces = useMemo(() => {
+
+  // FILTRAGE PRINCIPAL
+  const filteredAnnonces = useMemo(() => {
     return annonces.filter((annonce) => {
+      // Filtre Favoris
+      if (showOnlyFavorites && !favorites.includes(annonce.LIEN)) return false;
+
       const matchCommune = filterCommune === "" || annonce.COMMUNE_NORMALISEE === filterCommune;
       const matchType = filterType === "" || annonce.TYPE_NORMALISE === filterType;
       const matchPieces = filterPieces === "" || annonce["NOMBRE DE PIECES"] === filterPieces;
-      
       const prix = parseFloat(annonce.PRIX_NORMALISE) || 0;
       const surface = parseFloat(annonce.SURFACE) || 0;
-      
       const matchPrixMin = filterPrixMin === "" || prix >= parseFloat(filterPrixMin);
       const matchPrixMax = filterPrixMax === "" || prix <= parseFloat(filterPrixMax);
       const matchSurface = filterSurface === "" || surface >= parseFloat(filterSurface);
 
       return matchCommune && matchType && matchPieces && matchPrixMin && matchPrixMax && matchSurface;
     });
-  }, [annonces, filterCommune, filterType, filterPieces, filterSurface, filterPrixMin, filterPrixMax]);
-  
-  const totalPages = Math.ceil(filteredAnnonces.length / itemsPerPage);
+  }, [annonces, filterCommune, filterType, filterPieces, filterSurface, filterPrixMin, filterPrixMax, showOnlyFavorites, favorites]);
 
+  // PAGINATION
+  const totalPages = Math.ceil(filteredAnnonces.length / itemsPerPage);
   const paginatedData = useMemo(() => {
-    return filteredAnnonces.slice(
-      (currentPage - 1) * itemsPerPage,
-      currentPage * itemsPerPage
-    );
+    return filteredAnnonces.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
   }, [filteredAnnonces, currentPage]);
 
+  // CALCULATEURS MODALES
   const mensualite = useMemo(() => {
     if (!selectedAnnonce) return 0;
     const prix = parseInt(selectedAnnonce.PRIX_NORMALISE);
@@ -217,19 +217,14 @@ const filteredAnnonces = useMemo(() => {
 
   return (
     <main className="min-h-screen bg-[#f8fafc] text-slate-900 flex flex-col font-sans overflow-x-hidden">
-      
-      <Header 
-        favoritesCount={favorites.length} 
-        onToggleFavorites={handleToggleOnlyFavorites} 
-        showOnlyFavorites={showOnlyFavorites} 
-      />
+      <Header favoritesCount={favorites.length} onToggleFavorites={handleToggleOnlyFavorites} showOnlyFavorites={showOnlyFavorites} />
 
-      {/* HERO SECTION (Conservée car elle est unique) */}
+      {/* HERO */}
       <section className="bg-gradient-to-br from-blue-700 via-blue-600 to-cyan-500 text-white py-12 md:py-16 px-6 print:hidden">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12">
           <div className="flex-1 text-center md:text-left">
-            <h1 className="text-3xl md:text-6xl font-black mb-4 leading-[1.1]">Les annonces immo de Martinique, enfin réunies au même endroit.</h1>
-            <p className="text-base md:text-xl opacity-95 mb-8 font-medium max-w-2xl">AchatImmoMartinique est un outil indépendant qui centralise les annonces publiées par les agences immobilières de l’île afin de vous offrir une vision claire, globale et actualisée des biens disponibles en Martinique.</p>
+            <h1 className="text-3xl md:text-6xl font-black mb-4 leading-[1.1]">Les annonces immo de Martinique, enfin réunies.</h1>
+            <p className="text-base md:text-xl opacity-95 mb-8 font-medium max-w-2xl">AchatImmoMartinique centralise les annonces des agences de l’île pour une vision claire et actualisée.</p>
             <div className="flex flex-wrap justify-center md:justify-start gap-4">
               <a href="#listing" className="bg-white text-blue-700 px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-105 transition-all">Voir les annonces</a>
               <button onClick={fetchAnnonces} className="bg-blue-900/40 backdrop-blur-md border border-white/20 px-6 py-4 rounded-2xl font-bold hover:bg-blue-800/50 transition-all text-xs uppercase tracking-widest">🔄 Actualiser</button>
@@ -241,10 +236,10 @@ const filteredAnnonces = useMemo(() => {
         </div>
       </section>
 
-      {/* FILTRES & ALERTE EMAIL (Conservés ici pour la simplicité) */}
+      {/* FILTRES */}
       <section id="listing" className="max-w-[1600px] mx-auto px-4 md:px-6 w-full pt-8 print:hidden">
         <div className="bg-white p-5 md:p-10 rounded-[2rem] md:rounded-[2.5rem] shadow-xl border border-slate-100 mb-6">
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 items-end">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 items-end mb-8">
             <FilterBox label="Ville" onChange={setFilterCommune}>
               <option value="">Martinique</option>
               {communesDispo.map(c => <option key={c} value={c}>{c}</option>)}
@@ -269,52 +264,45 @@ const filteredAnnonces = useMemo(() => {
               <option value="">Pas de max</option>
               {[100000, 200000, 300000, 400000, 500000, 1000000].map(p => <option key={p} value={p.toString()}>{p.toLocaleString()} €</option>)}
             </FilterBox>
-      
-        {/* COMPOSANT ALERTE EMAIL PREMIUM */}
-        <EmailAlert 
-          currentCommune={filterCommune}
-          currentType={filterType}
-          currentPrixMax={filterPrixMax}
-          onAlertSubmit={handleAlertSubmit}
-        />
+          </div>
 
-        {/* BARRE D'INFOS HAUT DE GRILLE */}
-<div className="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
-  {/* COMPTEUR D'ANNONCES AVEC DIODE LIVE */}
-  <div className="flex items-center gap-3 bg-white px-5 py-2.5 rounded-2xl border border-slate-100 shadow-sm">
-    <div className="relative flex h-3 w-3">
-      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-      <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-    </div>
-    <p className="text-[11px] font-black uppercase tracking-wider text-slate-600">
-      <span className="text-blue-700">{filteredAnnonces.length}</span> annonces consultables actuellement
-    </p>
-  </div>
+          <EmailAlert 
+            currentCommune={filterCommune}
+            currentType={filterType}
+            currentPrixMax={filterPrixMax}
+            onAlertSubmit={handleAlertSubmit}
+          />
+        </div>
 
-  {/* BOUTON MODE INVESTISSEUR */}
-  <button 
-    onClick={() => setInvestorMode(!investorMode)} 
-    className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl border-2 transition-all shadow-sm ${
-      investorMode 
-        ? 'border-indigo-600 bg-indigo-50 text-indigo-700' 
-        : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'
-    }`}
-  >
-    <span className="text-base">{investorMode ? '📈' : '🏠'}</span>
-    <span className="text-[10px] font-black uppercase tracking-widest">
-      {investorMode ? 'Mode Investisseur Actif' : 'Passer en Mode Investisseur'}
-    </span>
-  </button>
-</div>
+        {/* INFOS BAR */}
+        <div className="mb-6 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-3 bg-white px-5 py-2.5 rounded-2xl border border-slate-100 shadow-sm">
+            <div className="relative flex h-3 w-3">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+            </div>
+            <p className="text-[11px] font-black uppercase tracking-wider text-slate-600">
+              <span className="text-blue-700">{filteredAnnonces.length}</span> annonces trouvées
+            </p>
+          </div>
 
-        {/* GRILLE ANNONCES */}
+          <button 
+            onClick={() => setInvestorMode(!investorMode)} 
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl border-2 transition-all shadow-sm ${
+              investorMode ? 'border-indigo-600 bg-indigo-50 text-indigo-700' : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200'
+            }`}
+          >
+            <span className="text-base">{investorMode ? '📈' : '🏠'}</span>
+            <span className="text-[10px] font-black uppercase tracking-widest">
+              {investorMode ? 'Mode Investisseur Actif' : 'Passer en Mode Investisseur'}
+            </span>
+          </button>
+        </div>
+
+        {/* GRID */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6 mb-16">
           {loading ? (
-            <>
-              {[...Array(10)].map((_, i) => (
-                <AnnonceSkeleton key={i} />
-              ))}
-            </>
+            [...Array(10)].map((_, i) => <AnnonceSkeleton key={i} />)
           ) : (
             paginatedData.map((annonce, index) => (
               <AnnonceCard 
@@ -346,12 +334,10 @@ const filteredAnnonces = useMemo(() => {
         )}
       </section>
 
-{/* SECTION À PROPOS / MÉTHODOLOGIE */}
       <AboutSection />
-      
       <Footer onToggleFavorites={handleToggleOnlyFavorites} />
 
-      {/* MODALES DE CALCULS (Conservées ici car elles gèrent des états locaux complexes) */}
+      {/* MODALE PRÊT */}
       {selectedAnnonce && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/70 backdrop-blur-md" onClick={() => setSelectedAnnonce(null)}></div>
@@ -369,6 +355,7 @@ const filteredAnnonces = useMemo(() => {
         </div>
       )}
 
+      {/* MODALE INVEST */}
       {investAnnonce && (
         <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-indigo-900/70 backdrop-blur-md" onClick={() => setInvestAnnonce(null)}></div>
@@ -382,14 +369,12 @@ const filteredAnnonces = useMemo(() => {
           </div>
         </div>
       )}
-      {/* ... tes autres modales ... */}
       
       <StickyFilter />
     </main>
   );
 }
 
-// Fonction utilitaire FilterBox (Conservée en bas de page pour la lisibilité)
 function FilterBox({ label, children, onChange }: { label: string; children: React.ReactNode; onChange: (val: string) => void }) {
   return (
     <div className="flex flex-col gap-3">
