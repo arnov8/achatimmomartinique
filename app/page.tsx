@@ -170,15 +170,24 @@ export default function Home() {
 
   // --- BLOC LOGIQUE UNIQUE (FILTRE + TRI + PAGINATION) ---
   const filteredAndSortedAnnonces = useMemo(() => {
-    // 1. On filtre
     let result = annonces.filter((annonce) => {
+      // 1. Filtres textes
       const matchCommune = filterCommune === "" || annonce.COMMUNE_NORMALISEE === filterCommune;
       const matchType = filterType === "" || annonce.TYPE_NORMALISE === filterType;
       const matchPieces = filterPieces === "" || annonce["NOMBRE DE PIECES"] === filterPieces;
-      return matchCommune && matchType && matchPieces;
+      
+      // 2. Filtres nombres (Prix et Surface)
+      const prix = parseFloat(annonce.PRIX_NORMALISE) || 0;
+      const surface = parseFloat(annonce.SURFACE) || 0;
+      
+      const matchPrixMin = filterPrixMin === "" || prix >= parseFloat(filterPrixMin);
+      const matchPrixMax = filterPrixMax === "" || prix <= parseFloat(filterPrixMax);
+      const matchSurface = filterSurface === "" || surface >= parseFloat(filterSurface);
+
+      return matchCommune && matchType && matchPieces && matchPrixMin && matchPrixMax && matchSurface;
     });
 
-    // 2. On trie le résultat du filtre
+    // 3. Le Tri
     return [...result].sort((a, b) => {
       const pA = parseFloat(a.PRIX_NORMALISE) || 0;
       const pB = parseFloat(b.PRIX_NORMALISE) || 0;
@@ -186,10 +195,13 @@ export default function Home() {
       if (sortBy === "prix-desc") return pB - pA;
       return new Date(b["DATE ET HEURE"]).getTime() - new Date(a["DATE ET HEURE"]).getTime();
     });
-  }, [annonces, filterCommune, filterType, filterPieces, sortBy]);
+  }, [annonces, filterCommune, filterType, filterPieces, filterSurface, filterPrixMin, filterPrixMax, sortBy]);
 
-  // 3. LA CORRECTION FATALE : On utilise la liste triée, pas la liste brute 'annonces'
-  const paginatedData = filteredAndSortedAnnonces.slice(0, 20);
+  // LA LIGNE QUI DÉBLOQUE TOUT (Celle-ci remplace ton ancienne ligne 84)
+  const paginatedData = filteredAndSortedAnnonces.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const paginatedData = filteredData.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
