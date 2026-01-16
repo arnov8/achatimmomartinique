@@ -181,6 +181,7 @@ const filteredAnnonces = useMemo(() => {
 
       return matchCommune && matchType && matchPieces && matchPrixMin && matchPrixMax && matchSurface;
     });
+    // J'ai supprimé "sortBy" de la ligne ci-dessous :
   }, [annonces, filterCommune, filterType, filterPieces, filterSurface, filterPrixMin, filterPrixMax]);
   
   const paginatedData = filteredAnnonces.slice(
