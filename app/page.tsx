@@ -37,7 +37,7 @@ export default function Home() {
   const [filterCommune, setFilterCommune] = useState("");
   const [filterType, setFilterType] = useState("");
   const [filterPieces, setFilterPieces] = useState("");
-  const [sortBy, setSortBy] = useState("recent");etape 2 jai c
+  const [sortBy, setSortBy] = useState("recent");
   const [filterSurface, setFilterSurface] = useState("");
   const [filterPrixMin, setFilterPrixMin] = useState("");
   const [filterPrixMax, setFilterPrixMax] = useState("");
