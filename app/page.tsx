@@ -37,6 +37,7 @@ export default function Home() {
   const [filterCommune, setFilterCommune] = useState("");
   const [filterType, setFilterType] = useState("");
   const [filterPieces, setFilterPieces] = useState("");
+  const [sortBy, setSortBy] = useState("recent");etape 2 jai c
   const [filterSurface, setFilterSurface] = useState("");
   const [filterPrixMin, setFilterPrixMin] = useState("");
   const [filterPrixMax, setFilterPrixMax] = useState("");
@@ -276,6 +277,12 @@ export default function Home() {
             <FilterBox label="Max €" onChange={setFilterPrixMax}>
               <option value="">Pas de max</option>
               {[100000, 200000, 300000, 400000, 500000, 1000000].map(p => <option key={p} value={p.toString()}>{p.toLocaleString()} €</option>)}
+            </FilterBox>
+            {/* BOUTON DE TRI */}
+            <FilterBox label="Trier par" onChange={setSortBy}>
+              <option value="recent">Plus récent</option>
+              <option value="prix-asc">Prix : Moins cher</option>
+              <option value="prix-desc">Prix : Plus cher</option>
             </FilterBox>
           </div>
         </div>
