@@ -264,19 +264,13 @@ export default function Home() {
           </div>
         </div>
 
-        <div id="alerte-email" className="bg-blue-600 rounded-[2rem] p-6 md:p-10 mb-8 flex flex-col lg:flex-row items-center justify-between gap-8 shadow-lg border-2 border-blue-400/20 relative overflow-hidden group">
-          <div className="flex-1 z-10 w-full text-white">
-            <h3 className="text-xl md:text-2xl font-black mb-4">🔔 Ne ratez plus aucune opportunité !</h3>
-            <div className="flex flex-wrap gap-2 mb-6">
-              <div className="bg-blue-800/40 px-4 py-2 rounded-xl text-xs font-bold border border-white/10">📍 {filterCommune || "Toute la Martinique"}</div>
-              <div className="bg-blue-800/40 px-4 py-2 rounded-xl text-xs font-bold border border-white/10">🏠 {filterType || "Tous types"}</div>
-            </div>
-          </div>
-          <form onSubmit={handleAlertSubmit} className="flex flex-col sm:flex-row w-full lg:w-auto gap-3 z-10">
-            <input type="email" placeholder="votre-email@exemple.com" value={email} onChange={(e) => setEmail(e.target.value)} className="bg-white text-slate-900 rounded-xl px-6 py-4.5 text-sm outline-none font-bold" required />
-            <button className="bg-slate-900 text-white px-8 py-4.5 rounded-xl text-[10px] font-black uppercase hover:bg-black transition-all shadow-xl">Activer l'alerte</button>
-          </form>
-        </div>
+        {/* COMPOSANT ALERTE EMAIL PREMIUM */}
+        <EmailAlert 
+          currentCommune={filterCommune}
+          currentType={filterType}
+          currentPrixMax={filterPrixMax}
+          onAlertSubmit={handleAlertSubmit}
+        />
 
         {/* SWITCH MODE INVESTISSEUR */}
         <div className="mb-4 flex justify-end">
