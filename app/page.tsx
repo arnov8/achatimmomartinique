@@ -224,7 +224,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-12">
           <div className="flex-1 text-center md:text-left">
             <h1 className="text-3xl md:text-6xl font-black mb-4 leading-[1.1]">Les annonces immo de Martinique, enfin réunies.</h1>
-            <p className="text-base md:text-xl opacity-95 mb-8 font-medium max-w-2xl">AchatImmoMartinique centralise les annonces des agences de l’île pour une vision claire et actualisée.</p>
+            <p className="text-base md:text-xl opacity-95 mb-8 font-medium max-w-2xl">AchatImmoMartinique centralise les annonces publiées par les agences immobilières de l’île afin de vous offrir une vision claire, globale et actualisée des biens disponibles en Martinique.</p>
             <div className="flex flex-wrap justify-center md:justify-start gap-4">
               <a href="#listing" className="bg-white text-blue-700 px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-105 transition-all">Voir les annonces</a>
               <button onClick={fetchAnnonces} className="bg-blue-900/40 backdrop-blur-md border border-white/20 px-6 py-4 rounded-2xl font-bold hover:bg-blue-800/50 transition-all text-xs uppercase tracking-widest">🔄 Actualiser</button>
