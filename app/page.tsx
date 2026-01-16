@@ -275,17 +275,8 @@ export default function Home() {
             {/* BOUTON DE TRI */}
             <FilterBox label="Trier par" onChange={setSortBy}>
               <option value="recent">Plus récent</option>
-              <option value="prix-asc">Prix : Moins cher</option>
-              <option value="prix-desc">Prix : Plus cher</option>
-            </FilterBox>
-          </div>
-        </div>
-
-        {/* ÉTAPE 3 : AJOUT DU SÉLECTEUR DE TRI */}
-            <FilterBox label="Trier par" onChange={setSortBy}>
-              <option value="recent">Plus récent</option>
-              <option value="prix-asc">Prix : Moins cher</option>
-              <option value="prix-desc">Prix : Plus cher</option>
+              <option value="prix-asc">Prix croissant</option>
+              <option value="prix-desc">Prix décroissant</option>
             </FilterBox>
         
         {/* COMPOSANT ALERTE EMAIL PREMIUM */}
